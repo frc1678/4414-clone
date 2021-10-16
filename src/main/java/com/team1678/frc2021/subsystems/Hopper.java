@@ -27,7 +27,7 @@ public class Hopper implements Subsystem {
 
     }
 
-    public void setState(State) {
+    public void setState(State state) {
         this.state = state;
     }
 
@@ -53,8 +53,8 @@ public class Hopper implements Subsystem {
     }
 
     private void runStateMachine() {
-        switch (switch){
-            case (State.ELEVATING):
+        switch (state) {
+            case ELEVATING:
                 // If ball has reached sensor set demand to zero
                 if (mSensor.get()) {
                     periodicIO.demand = 0;
@@ -62,13 +62,13 @@ public class Hopper implements Subsystem {
                     periodicIO.demand = Constants.elevatingDemand;
                 }
                 break;
-            case (State.SHOOTING):
+            case SHOOTING:
                 periodicIO.demand = Constants.hellavatingDemand;
                 break;
-            case (State.REVERSING):
+            case REVERSING:
                 periodicIO.demand = -Constants.elevatingDemand;
                 break;
-            case (State.IDLE):
+            case IDLE:
                 periodicIO.demand = 0;
                 break;
         }
