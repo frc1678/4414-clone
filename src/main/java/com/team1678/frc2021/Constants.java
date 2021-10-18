@@ -2,10 +2,12 @@ package com.team1678.frc2021;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import com.team1678.frc2021.subsystems.LinearServo;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 
 import com.team1678.frc2021.RobotContainer;
 import com.team1678.frc2021.lib.util.SwerveModuleConstants;
@@ -85,8 +87,8 @@ public final class Constants {
             public static final int angleMotorID = 1;
             public static final int canCoderID = 1;
             public static final double angleOffset = 0;
-            public static final SwerveModuleConstants constants = 
-                new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+            public static final SwerveModuleConstants constants =
+                    new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
 
         /* Front Right Module - Module 1 */
@@ -95,18 +97,18 @@ public final class Constants {
             public static final int angleMotorID = 1;
             public static final int canCoderID = 1;
             public static final double angleOffset = 0;
-            public static final SwerveModuleConstants constants = 
-                new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+            public static final SwerveModuleConstants constants =
+                    new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
-        
+
         /* Back Left Module - Module 2 */
         public static final class Mod2 {
             public static final int driveMotorID = 1;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 1;
             public static final double angleOffset = 0;
-            public static final SwerveModuleConstants constants = 
-                new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+            public static final SwerveModuleConstants constants =
+                    new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
 
         /* Back Right Module - Module 3 */
@@ -115,8 +117,8 @@ public final class Constants {
             public static final int angleMotorID = 1;
             public static final int canCoderID = 1;
             public static final double angleOffset = 0;
-            public static final SwerveModuleConstants constants = 
-                new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+            public static final SwerveModuleConstants constants =
+                    new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
 
     }
@@ -129,31 +131,43 @@ public final class Constants {
         public static final double snapEpsilon = 1.0;
 
         //Constraints for the profiled angle controller (vals stolen from AutoConstants)
-        public static final double kMaxAngularSpeedRadiansPerSecond = 4*Math.PI;
+        public static final double kMaxAngularSpeedRadiansPerSecond = 4 * Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.pow(kMaxAngularSpeedRadiansPerSecond, 2);
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
-        new TrapezoidProfile.Constraints(
-            kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+                new TrapezoidProfile.Constraints(
+                        kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
     }
 
     public static final class AutoConstants {
         public static final double kMaxSpeedMetersPerSecond = 4.5;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-        public static final double kMaxAngularSpeedRadiansPerSecond = 2*Math.PI;
+        public static final double kMaxAngularSpeedRadiansPerSecond = 2 * Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.pow(kMaxAngularSpeedRadiansPerSecond, 2);
 
         public static final double kSlowMaxSpeedMetersPerSecond = 2.0;
         public static final double kSlowMaxAccelerationMetersPerSecondSquared = 3;
-    
+
         public static final double kPXController = 1;
         public static final double kPYController = 1;
         public static final double kPThetaController = 1;
-    
+
         // Constraint for the motion profilied robot angle controller
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
-            new TrapezoidProfile.Constraints(
-                kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
-      }
+                new TrapezoidProfile.Constraints(
+                        kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+    }
+
+    //Servo
+    public static final int SERVO = 7;
+    public static final double SERVO_EXTEND = 1.0;
+    public static final double SERVO_RETRACT = 0.0;
+
+    //Hood
+    public static final int HOOD_SERVO_A = 2;
+    public static final int HOOD_SERVO_B = 3;
+    public static final double HOOD_SPEED = 1;
+
+    public static final double kHoodRadius = 11.904; // radius of hood
 
 }
