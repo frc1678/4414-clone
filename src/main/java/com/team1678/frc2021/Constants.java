@@ -159,9 +159,9 @@ public final class Constants {
     }
 
     //Servo
-    public static final int SERVO = 7;
-    public static final double SERVO_EXTEND = 1.0;
-    public static final double SERVO_RETRACT = 0.0;
+    public static final int kServo = 7;
+    public static final double kServoExtend = 1.0;
+    public static final double kServoRetract = 0.0;
 
     //Hood
     public static final int kHoodServoA = 2;
