@@ -17,13 +17,13 @@ public class Hood extends LinearServo {
     public Hood() {
         super(mInstance.getChannel(), mInstance.hashCode(), mInstance.getRaw());
         super.getChannel();
-        hoodServoA = new Servo(Constants.HOOD_SERVO_A);
-        hoodServoB = new Servo(Constants.HOOD_SERVO_B);
+        hoodServoA = new Servo(Constants.kHoodServoA);
+        hoodServoB = new Servo(Constants.kHoodServoB);
     }
 
     public void hoodExtend() {
-        hoodServoA.set(Constants.HOOD_SPEED);
-        hoodServoB.set(Constants.HOOD_SPEED);
+        hoodServoA.set(Constants.kHoodSpeed);
+        hoodServoB.set(Constants.kHoodSpeed);
     }
 
     public void hoodStop() {
