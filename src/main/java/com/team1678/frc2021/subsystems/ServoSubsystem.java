@@ -7,15 +7,15 @@ import com.team1678.frc2021.Constants;
 public class ServoSubsystem implements Subsystem {
     private Servo hoodServo;
     public ServoSubsystem() {
-        hoodServo = new Servo(Constants.SERVO);
+        hoodServo = new Servo(Constants.kServo);
     }
 
     public void ExtendServo() {
-        hoodServo.set(Constants.SERVO_EXTEND);
+        hoodServo.set(Constants.kServoExtend);
     }
 
     public void RetractServo() {
-        hoodServo.set(Constants.SERVO_RETRACT);
+        hoodServo.set(Constants.kServoRetract);
     }
 
     @Override
