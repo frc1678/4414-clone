@@ -164,9 +164,9 @@ public final class Constants {
     public static final double SERVO_RETRACT = 0.0;
 
     //Hood
-    public static final int HOOD_SERVO_A = 2;
-    public static final int HOOD_SERVO_B = 3;
-    public static final double HOOD_SPEED = 1;
+    public static final int kHoodServoA = 2;
+    public static final int kHoodServoB = 3;
+    public static final double kHoodSpeed = 1;
 
     public static final double kHoodRadius = 11.904; // radius of hood
 
