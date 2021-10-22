@@ -6,7 +6,7 @@ import com.team1678.frc2021.Constants;
 
 public class ServoSubsystem implements Subsystem {
     private Servo hoodServo;
-    private AnalogEncoder hoodEncoder;
+    private Encoder hoodEncoder;
     public ServoSubsystem() {
         hoodServo = new Servo(Constants.kServo);
     }
@@ -20,8 +20,6 @@ public class ServoSubsystem implements Subsystem {
         public int kAbsoluteEncoderID =  3;
 
     }
-
-
 
     public void ExtendServo() {
         hoodServo.set(Constants.kServoExtend);
