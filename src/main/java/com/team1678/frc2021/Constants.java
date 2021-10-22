@@ -3,6 +3,7 @@ package com.team1678.frc2021;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import com.team1678.frc2021.subsystems.LinearServo;
+import com.team1678.frc2021.subsystems.ServoSubsystem;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
@@ -164,10 +165,16 @@ public final class Constants {
     public static final double kServoRetract = 0.0;
 
     //Hood
-    public static final int kHoodServoA = 2;
-    public static final int kHoodServoB = 3;
-    public static final double kHoodSpeed = 1;
+    public static final ServoSubsystem.ServoSubsystemConstants kHoodConstants = new ServoSubsystem.ServoSubsystemConstants();
+    static {
+        kHoodConstants.kHoodServoA = 2;
+        kHoodConstants.kHoodServoB = 3;
+        kHoodConstants.kHoodSpeed = 1;
 
-    public static final double kHoodRadius = 11.904; // radius of hood
+        kHoodConstants.kHoodRadius = 11.904; // radius of hood
+        kHoodConstants.kAbsoluteEncoderID = 3;
+
+    }
+
 
 }
