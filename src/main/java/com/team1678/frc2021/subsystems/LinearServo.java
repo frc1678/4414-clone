@@ -4,8 +4,10 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
+import java.io.FileInputStream;
+
 public class LinearServo extends Servo {
-    
+
     double m_speed;
     double m_length;
 
@@ -19,6 +21,7 @@ public class LinearServo extends Servo {
  * @param length max length of the servo [mm]
  * @parom speed max speed of the servo [mm/sec]
  **/
+
 public LinearServo(int channel, int length, int speed){
     super(channel);
     setBounds(2.0,1.8,1.5, 1.2, 1.0);
@@ -26,7 +29,8 @@ public LinearServo(int channel, int length, int speed){
     m_speed = speed;
 }
 
-/**
+
+    /**
  * Run this method in any periodic funtion to update the position estimation servo
  *
  * @param setpoint the tartget position of servo [mm]
@@ -77,4 +81,3 @@ public boolean isFinished(){
     protected void readPeriodicInputs() {
     }
 }
-
