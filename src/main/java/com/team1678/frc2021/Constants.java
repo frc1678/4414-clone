@@ -13,6 +13,16 @@ import com.team1678.frc2021.lib.util.SwerveModuleConstants;
 public final class Constants {
     public static final double stickDeadband = 0.1;
 
+    //Shooter
+    public static final int kMasterFlywheelID = 2;
+    public static final int kSlaveFlywheelID = 15;
+    public static final int kOverheadFlywheelID = 16;
+    public static final double kShooterP = 0.2;
+    public static final double kShooterI = 0.00004;
+    public static final double kShooterD = 0.0;
+    public static final double kShooterF = 0.05;
+
+
     public static final class Swerve {
         public static final int pigeonID = 1;
         public static final boolean invertGyro = true; // Always ensure Gyro is CCW+ CW-
