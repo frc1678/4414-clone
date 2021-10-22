@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.AnalogEncoder;
 
 public class Hood extends LinearServo {
     private static Hood mInstance;
-    private AnalogEncoder mEncoder;
+    private Encoder mEncoder;
     private boolean mHoming = true;
     private Servo hoodServoA;
     private Servo hoodServoB;
@@ -22,6 +22,7 @@ public class Hood extends LinearServo {
         super(mInstance.getChannel(), mInstance.hashCode(), mInstance.getRaw());
         hoodServoA = new Servo(Constants.kHoodConstants.kHoodServoA);
         hoodServoB = new Servo(Constants.kHoodConstants.kHoodServoB);
+        Encoder encoder = new Encoder(0,1);
     }
 
     public void hoodExtend() {
