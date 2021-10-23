@@ -7,6 +7,8 @@ import com.team1678.frc2021.Constants;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import java.lang.invoke.ConstantBootstraps;
@@ -44,78 +46,6 @@ public class Intake implements Subsystem {
         smartDashboard();
     }
 
-    public void runStateMachine() {
-        switch (mState) {
-            case INTAKING:
-                if (mPeriodicIO.intake_out) {
-                    mPeriodicIO.demand = kIntakingVoltage;
-                } else {
-                    mPeriodicIO.demand = 0.0;
-                }
-                mPeriodicIO.deploy = true;
-                break;
-            case IDLE:
-                mPeriodicIO.demand = kIdleVoltage;
-                mPeriodicIO.deploy = false;
-                break;
-            case REVERSING:
-                if (mPeriodicIO.intake_out) {
-                    mPeriodicIO.demand = kReversingVoltage;
-                } else {
-                    mPeriodicIO.demand = 0.0;
-                }
-        }
-    }
-
-    public static class PeriodicIO{
-        //INPUTS
-        public double current;
-        public boolean intake_out;
-        //OUTPUTS
-        public double demand;
-        public boolean deploy;
-    }
-
-    private static PeriodicIO mPeriodicIO = new PeriodicIO();
-
-
-    public static synchronized Intake getInstance() {
-        if (mInstance == null) {
-            mInstance = new Intake();
-        }
-        return mInstance;
-    }
-
-    @Override
-    public void stop() {
-        mMaster.set(ControlMode.PercentOutput, 0);
-    }
-
-    @Override
-    public void zeroSensors() {
-        // Zero sensors?
-    }
-
-            @Override
-            public void onStart(double timestamp) {
-                mState = State.IDLE;
-            }
-
-            @Override
-            public void onLoop(double timestamp) {
-                synchronized (Intake.this) {
-                    runStateMachine();
-
-                }
-            }
-
-            @Override
-            public void onStop(double timestamp) {
-                mState = State.IDLE;
-                stop();
-            }
-
-
     public synchronized void setOpenLoop(double percentage) {
         mPeriodicIO.demand = percentage;
     }
@@ -144,13 +74,68 @@ public class Intake implements Subsystem {
 
     }
 
-    @Override
-    public synchronized void outputTelemetry() {
-        SmartDashboard.putNumber("Intake Current", mPeriodicIO.current);
-        SmartDashboard.putString("Intake State", mState.toString());
+    public void runStateMachine() {
+        switch (mState) {
+            case INTAKING:
+                if (mPeriodicIO.intake_out) {
+                    mPeriodicIO.demand = kIntakingVoltage;
+                } else {
+                    mPeriodicIO.demand = 0.0;
+                }
+                mPeriodicIO.deploy = true;
+                break;
+            case IDLE:
+                mPeriodicIO.demand = kIdleVoltage;
+                mPeriodicIO.deploy = false;
+                break;
+            case REVERSING:
+                if (mPeriodicIO.intake_out) {
+                    mPeriodicIO.demand = kReversingVoltage;
+                } else {
+                    mPeriodicIO.demand = 0.0;
+                }
         }
+    }
+
+    public static class PeriodicIO {
+        //INPUTS
+        public double current;
+        public boolean intake_out;
+        //OUTPUTS
+        public double demand;
+        public boolean deploy;
+    }
+
+    private static PeriodicIO mPeriodicIO = new PeriodicIO();
+
+
+    public static synchronized Intake getInstance() {
+        if (mInstance == null) {
+            mInstance = new Intake();
+        }
+        return mInstance;
+    }
+
     @Override
-    public boolean checkSystem(){
-        return true;
+    public void periodic() {
+        synchronized (Intake.this) {
+            runStateMachine();
+        }
+    }
+
+    @Override
+    public Command getCurrentCommand() {
+        mCurrent = mPeriodicIO.current;
+        return null;
+    }
+
+    @Override
+    public void setDefaultCommand(Command defaultCommand) {
+        mState = State.IDLE;
+    }
+
+    @Override
+    public Command getDefaultCommand() {
+        return CommandScheduler.getInstance().requiring(this);
     }
 }
