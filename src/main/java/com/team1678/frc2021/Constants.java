@@ -16,7 +16,6 @@ public final class Constants {
     //Shooter
     public static final int kMasterFlywheelID = 2;
     public static final int kSlaveFlywheelID = 15;
-    public static final int kOverheadFlywheelID = 16;
     public static final double kShooterP = 0.2;
     public static final double kShooterI = 0.00004;
     public static final double kShooterD = 0.0;
