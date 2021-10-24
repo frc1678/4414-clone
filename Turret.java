@@ -1,32 +1,21 @@
 package com.team1678.frc2021.subsystems;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
-
 import com.team1678.frc2021.SwerveModule;
 import com.team1678.frc2021.lib.util.TimeDelayedBoolean;
 import com.team1678.frc2021.Constants;
-
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
-
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Turret implements Subsystem {
-    private TalonFX mMaster;
+    public TalonFX mMaster;
 
     Turret() {
         //there's only one TalonFX, so we can call just call it "Turret"
