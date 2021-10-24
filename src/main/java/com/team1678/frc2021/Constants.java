@@ -2,10 +2,13 @@ package com.team1678.frc2021;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import com.team1678.frc2021.subsystems.LinearServo;
+import com.team1678.frc2021.subsystems.ServoSubsystem;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 
 import com.team1678.frc2021.RobotContainer;
 import com.team1678.frc2021.lib.util.SwerveModuleConstants;
@@ -85,8 +88,8 @@ public final class Constants {
             public static final int angleMotorID = 1;
             public static final int canCoderID = 1;
             public static final double angleOffset = 0;
-            public static final SwerveModuleConstants constants = 
-                new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+            public static final SwerveModuleConstants constants =
+                    new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
 
         /* Front Right Module - Module 1 */
@@ -95,18 +98,18 @@ public final class Constants {
             public static final int angleMotorID = 1;
             public static final int canCoderID = 1;
             public static final double angleOffset = 0;
-            public static final SwerveModuleConstants constants = 
-                new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+            public static final SwerveModuleConstants constants =
+                    new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
-        
+
         /* Back Left Module - Module 2 */
         public static final class Mod2 {
             public static final int driveMotorID = 1;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 1;
             public static final double angleOffset = 0;
-            public static final SwerveModuleConstants constants = 
-                new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+            public static final SwerveModuleConstants constants =
+                    new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
 
         /* Back Right Module - Module 3 */
@@ -115,8 +118,8 @@ public final class Constants {
             public static final int angleMotorID = 1;
             public static final int canCoderID = 1;
             public static final double angleOffset = 0;
-            public static final SwerveModuleConstants constants = 
-                new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+            public static final SwerveModuleConstants constants =
+                    new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
 
     }
@@ -129,31 +132,58 @@ public final class Constants {
         public static final double snapEpsilon = 1.0;
 
         //Constraints for the profiled angle controller (vals stolen from AutoConstants)
-        public static final double kMaxAngularSpeedRadiansPerSecond = 4*Math.PI;
+        public static final double kMaxAngularSpeedRadiansPerSecond = 4 * Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.pow(kMaxAngularSpeedRadiansPerSecond, 2);
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
-        new TrapezoidProfile.Constraints(
-            kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+                new TrapezoidProfile.Constraints(
+                        kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
     }
 
     public static final class AutoConstants {
         public static final double kMaxSpeedMetersPerSecond = 4.5;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-        public static final double kMaxAngularSpeedRadiansPerSecond = 2*Math.PI;
+        public static final double kMaxAngularSpeedRadiansPerSecond = 2 * Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.pow(kMaxAngularSpeedRadiansPerSecond, 2);
 
         public static final double kSlowMaxSpeedMetersPerSecond = 2.0;
         public static final double kSlowMaxAccelerationMetersPerSecondSquared = 3;
-    
+
         public static final double kPXController = 1;
         public static final double kPYController = 1;
         public static final double kPThetaController = 1;
-    
+
         // Constraint for the motion profilied robot angle controller
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
-            new TrapezoidProfile.Constraints(
-                kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
-      }
+                new TrapezoidProfile.Constraints(
+                        kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+    }
+
+    //Servo
+    public static final int kServo = 7;
+    public static final double kServoExtend = 1.0;
+    public static final double kServoRetract = 0.0;
+
+    //Hood
+    public static final ServoSubsystem.ServoSubsystemConstants kHoodConstants = new ServoSubsystem.ServoSubsystemConstants();
+    static {
+        kHoodConstants.kHoodServoA = 2;
+        kHoodConstants.kHoodServoB = 3;
+        kHoodConstants.kHoodSpeed = 1;
+
+        kHoodConstants.kHoodRadius = 11.904; // radius of hood
+        kHoodConstants.kAbsoluteEncoderID = 3;
+    }
+
+    //Intake
+    public static int masterIntakeMotorId;
+
+    //Shooter
+    public static final int kMasterFlywheelID = 2;
+    public static final int kSlaveFlywheelID = 15;
+    public static final double kShooterP = 0.2;
+    public static final double kShooterI = 0.00004;
+    public static final double kShooterD = 0.0;
+    public static final double kShooterF = 0.05;
 
 }
