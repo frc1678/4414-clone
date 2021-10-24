@@ -23,16 +23,16 @@ public class Turret implements Subsystem {
         mMaster.set(ControlMode.PercentOutput, 0.62);
 
         //sets the software limits for the spin of the turret
-        mMaster.RightSideLimit(true);
-        mMaster.LeftSideLimit(true);
-        mMaster.setRightSideLimit(Constants.MaxRadAngle / (235.0 * Constants.RotationsPerTick));
-        mMaster.setReverseSoftLimit(Constants.MinRadAngle / (235.0 * Constants.RotationsPerTick));
+        mEncoder.RightSideLimit(true);
+        mEncoder.LeftSideLimit(true);
+        mEncoder.setRightSideLimit(Constants.MaxRadAngle / (235.0 * Constants.RotationsPerTick));
+        mEncoder.setReverseSoftLimit(Constants.MinRadAngle / (235.0 * Constants.RotationsPerTick));
     }
 
     //sets the turret to starting position, in our case, facing the left
     synchronized void SetsAngle(Rotation2d angle) {
-        mEncoder.changeControlMode(mMaster.TalonControlMode.Position);
-        mEncoder.set(angle.getRadians() / (2 * Math.PI * Constants.RotationPerTick));
+        mMaster.changeControlMode(mMaster.TalonControlMode.Position);
+        mMaster.set(angle.getRadians() / (2 * Math.PI * Constants.RotationPerTick));
     }
 
     @Override
