@@ -176,7 +176,7 @@ public final class Constants {
     }
 
     //Intake
-    public static int masterIntakeMotorId;
+    public static int masterIntakeMotorId = 5;
 
     //Shooter
     public static final int kMasterFlywheelID = 2;
@@ -185,5 +185,5 @@ public final class Constants {
     public static final double kShooterI = 0.00004;
     public static final double kShooterD = 0.0;
     public static final double kShooterF = 0.05;
-
+    
 }
