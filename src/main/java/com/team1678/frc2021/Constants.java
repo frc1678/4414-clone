@@ -173,11 +173,18 @@ public final class Constants {
 
         kHoodConstants.kHoodRadius = 11.904; // radius of hood
         kHoodConstants.kAbsoluteEncoderID = 3;
-
     }
 
+    //Intake
+    public static int masterIntakeMotorId = 5;
 
-    //intake
-    public static int masterIntakeMotorId;
-
+    //Shooter
+    public static final int kMasterFlywheelID = 2;
+    public static final int kSlaveFlywheelID = 15;
+    public static final double kShooterP = 0.2;
+    public static final double kShooterI = 0.00004;
+    public static final double kShooterD = 0.0;
+    public static final double kShooterF = 0.05;
+    
 }
+
