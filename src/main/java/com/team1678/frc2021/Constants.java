@@ -177,4 +177,7 @@ public final class Constants {
     }
 
 
+    //intake
+    public static int masterIntakeMotorId;
+
 }
