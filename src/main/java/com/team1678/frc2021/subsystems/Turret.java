@@ -1,26 +1,27 @@
 package com.team1678.frc2021.subsystems;
 
 import com.ctre.phoenix.Util;
-import java.util.List;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.team1678.frc2021.Constants;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Turret implements Subsystem {
     private static Turret mInstance;
-    private Encoder turretEncoder;
+    private Encoder mturretEncoder;
     private double mOffset = 0;
     private boolean mHoming = true;
     public static final boolean kUseManualHomingRoutine = false;
 
     private TalonFX mMaster = new TalonFX(Constants.turretMotorId);
     private DigitalInput mLimitSwitch = new DigitalInput(1);
-    private Encoder getTurretEncoder = new Encoder(0,1);
+    private final Encoder getMturretEncoder = new Encoder(0,1);
 
     private static final SupplyCurrentLimitConfiguration CURR_LIM = new SupplyCurrentLimitConfiguration(true, 40,60,0.01);
 
@@ -49,12 +50,16 @@ public class Turret implements Subsystem {
     }
 
     public synchronized double getPosition(){
-        return turretEncoder.getRaw();
+        return mturretEncoder.getRaw();
+    }
+
+    private boolean atHomingLocation() {
+        return mHoming;
     }
 
     @Override
     public void periodic() {
         // Runs every tick
+            }
     }
-
-}
+    
