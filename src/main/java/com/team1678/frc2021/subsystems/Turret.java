@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.team1678.frc2021.Constants;
-import com.team1678.frc2021.lib.util.HallCalibration;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -20,7 +19,6 @@ public class Turret implements Subsystem {
     public static final boolean kUseManualHomingRoutine = false;
 
     private TalonFX mMaster = new TalonFX(Constants.turretMotorId);
-    private HallCalibration calibration = new HallCalibration(0);
     private DigitalInput mLimitSwitch = new DigitalInput(1);
     private Encoder getTurretEncoder = new Encoder(0,1);
 
