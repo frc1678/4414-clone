@@ -43,6 +43,12 @@ public class Turret implements Subsystem {
             double mForwardSoftLimitTicks = Constants.MaxRadAngle / (235.0 * Constants.RotationsPerTick);
             return Util.cap(mReverseSoftLimitTicks, mForwardSoftLimitTicks);
         }
+
+        //Sets Turret to starting position
+        synchronized void SetsAngle(Rotation2d angle) {
+            mMaster.changeMotionControlFramePeriod(mMaster.TalonControlMode.position);
+            mMaster.set(angle.getRadians()/(2 * Math.Pi * Constants.RotationsPerTick));
+        }
     }
 
     public synchronized double getAngle() {
