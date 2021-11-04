@@ -10,14 +10,16 @@ import com.team1678.frc2021.Constants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
-public class Climber extends Subsystem {
-    private static Climber mInstance = null;
+public class Climber implements Subsystem {
 
-    private static final double kRetractingVoltage = 2.0;
+    private static final double kRetractingVoltage = 200.0;
     private static final double kExtendingVoltage = 2.0;
-    private static final double kClimbingVoltage = 2.0;
+    private static final double kClimbingVoltage = -2.0;
+    private static final double kIdleVoltage = 0.0;
+    private static Climber mInstance;
     private double mInitialTime;
 
     private boolean mExtended = false;
@@ -27,19 +29,19 @@ public class Climber extends Subsystem {
     private final TalonFX mMaster;
 
     public enum WantedAction {
-        RETRACT, EXTEND, CLIMB,
+        NONE , RETRACT, EXTEND, CLIMB,
     }
 
     private static WantedAction mWantedAction;
 
     public enum State {
-        RETRACTING, EXTENDING, CLIMBING
+        IDLE , RETRACTING, EXTENDING, CLIMBING,
     }
 
-    private State mState;
+    private State mState = State.IDLE;
 
     private Climber() {
-        mMaster = new TalonFX(Constants.kPulleyMotor);
+        mMaster = new TalonFX(Constants.motorClimberID);
         mMaster.set(ControlMode.PercentOutput, 0);
         mMaster.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
         mMaster.enableVoltageCompensation(true);
@@ -69,7 +71,20 @@ public class Climber extends Subsystem {
     }
 
     @Override
-    public void outputTelemetry() {
+    public void setDefaultCommand(Command defaultCommand) {
+        mState = State.IDLE;
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        synchronized (Climber.this) {
+            runStateMachine();
+        }
+    }
+
+    @Override
+    public void periodic() {
+        Subsystem.super.periodic();
         SmartDashboard.putString("ClimberState", mState.name());
         SmartDashboard.putNumber("ClimbOutputVoltage", mMaster.getMotorOutputVoltage());
         SmartDashboard.putNumber("Climber Voltage", mPeriodicIO.voltage);
@@ -80,9 +95,15 @@ public class Climber extends Subsystem {
         SmartDashboard.putNumber("Climber Goal", mPeriodicIO.demand);
     }
 
+    public synchronized State getState() {
+        return mState;
+    }
+
     public void runStateMachine() {
         final double now = Timer.getFPGATimestamp();
         switch (mState) {
+            case IDLE:
+                mPeriodicIO.demand = kIdleVoltage;
             case RETRACTING:
                 mPeriodicIO.demand = kRetractingVoltage;
                 break;
@@ -100,6 +121,8 @@ public class Climber extends Subsystem {
         mWantedAction = wanted_state;
 
         switch (wanted_state) {
+            case NONE:
+                mState = State.IDLE;
             case RETRACT:
                 mState = State.RETRACTING;
             case EXTEND:
@@ -110,8 +133,6 @@ public class Climber extends Subsystem {
                 break;
         }
     }
-
-
 
     public static class PeriodicIO {
         // INPUTS

@@ -160,9 +160,6 @@ public final class Constants {
     public static int masterIntakeMotorId;
 
     //climber
-    public static int kPulleyMotor;
+    public static int motorClimberID;
     public static int kLongCANTimeoutMs;
-    public static int kRetractingVoltage;
-    public static int kExtendingVoltage;
-    public static int kClimbingVoltage;
 }
