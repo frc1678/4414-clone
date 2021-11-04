@@ -171,21 +171,7 @@ public final class Constants {
     public static final int kServo = 7;
     public static final double kServoExtend = 1.0;
     public static final double kServoRetract = 0.0;
-
-    //Hood
-    public static final ServoSubsystem.ServoSubsystemConstants kHoodConstants = new ServoSubsystem.ServoSubsystemConstants();
-    static {
-        kHoodConstants.kHoodServoA = 2;
-        kHoodConstants.kHoodServoB = 3;
-        kHoodConstants.kHoodSpeed = 1;
-
-        kHoodConstants.kHoodRadius = 11.904; // radius of hood
-        kHoodConstants.kAbsoluteEncoderID = 3;
-    }
-
-    //Intake
-    public static int masterIntakeMotorId = 5;
-
+  
     //Shooter
     public static final int kMasterFlywheelID = 2;
     public static final int kSlaveFlywheelID = 15;
@@ -193,8 +179,10 @@ public final class Constants {
     public static final double kShooterI = 0.00004;
     public static final double kShooterD = 0.0;
     public static final double kShooterF = 0.05;
-    
+  
     //Climber
-    public static int motorClimberID;
-    public static int kLongCANTimeoutMs;
+    public static final int motorClimberID;
+    public static final int kLongCANTimeouts;
+    
 }
+
