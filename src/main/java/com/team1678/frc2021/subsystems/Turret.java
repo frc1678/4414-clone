@@ -47,7 +47,7 @@ public class Turret implements Subsystem {
         //Sets Turret to starting position
         synchronized void SetsAngle(Rotation2d angle) {
             mMaster.changeMotionControlFramePeriod(mMaster.TalonControlMode.position);
-            mMaster.set(angle.getRadians()/(2 * Math.Pi * Constants.RotationsPerTick));
+            mMaster.set(angle.getRadians()/(2 * Math.PI * Constants.RotationsPerTick));
         }
     }
 
