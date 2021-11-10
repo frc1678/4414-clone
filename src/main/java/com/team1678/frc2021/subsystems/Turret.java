@@ -1,5 +1,6 @@
 package com.team1678.frc2021.subsystems;
 
+import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.Util;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
@@ -7,10 +8,11 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.team1678.frc2021.Constants;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 public class Turret implements Subsystem {
     private static Turret mInstance;
@@ -18,6 +20,7 @@ public class Turret implements Subsystem {
     private double mOffset = 0;
     private boolean mHoming = true;
     public static final boolean kUseManualHomingRoutine = false;
+    private boolean ismHoming = true;
 
     private TalonFX mMaster = new TalonFX(Constants.turretMotorId);
     private DigitalInput mLimitSwitch = new DigitalInput(1);
@@ -43,11 +46,41 @@ public class Turret implements Subsystem {
             double mForwardSoftLimitTicks = Constants.MaxRadAngle / (235.0 * Constants.RotationsPerTick);
             return Util.cap(mReverseSoftLimitTicks, mForwardSoftLimitTicks);
         }
+        
+    }
 
-        //Sets Turret to starting position
-        synchronized void SetsAngle(Rotation2d angle) {
-            mMaster.changeMotionControlFramePeriod(mMaster.TalonControlMode.position);
-            mMaster.set(angle.getRadians()/(2 * Math.PI * Constants.RotationsPerTick));
+    public synchronized boolean ismHoming() {
+        return mHoming;
+    }
+
+    private void updateHoming() {
+        mHoming =! new Turret() {
+            @Override
+            public synchronized boolean ismHoming() {
+                return super.ismHoming();
+            }
+
+            public boolean checkSystem() {
+                return false;
+            }
+        }.checkSystem();
+    }
+
+    public synchronized void autonomousPeriodic() {
+        if(mHoming) {
+            System.out.println("is calibrated");
+            mturretEncoder.reset();
+
+            //Motor to encoder
+
+            mMaster.setSelectedSensorPosition(mturretEncoder.getDistance());
+            mMaster.setSelectedSensorPosition((int) getAngle());
+
+            mMaster.overrideSoftLimitsEnable(true);
+            System.out.println("Homed!!!");
+            mHoming = false;
+        }else {
+            mturretEncoder.reset();
         }
     }
 
@@ -66,6 +99,5 @@ public class Turret implements Subsystem {
     @Override
     public void periodic() {
         // Runs every tick
-            }
     }
-    
+}
