@@ -22,6 +22,20 @@ public class Hopper extends Subsystem {
 
     private State mState = State.IDLE;
 
+    public enum State {
+        ELEVATING,
+        SHOOTING,
+        REVERSING,
+        IDLE,
+    }
+
+    public enum WantedAction {
+        ELEVATE,
+        SHOOT,
+        REVERSE,
+        NONE
+    }
+
     private Hopper() {
 
         mMaster = new TalonFX(Constants.masterElevatorMotorId);
@@ -69,7 +83,6 @@ public class Hopper extends Subsystem {
             public void onLoop(double timestamp) {
                 synchronized (Hopper.this) {
                     runStateMachine();
-
                 }
             }
 
@@ -79,6 +92,24 @@ public class Hopper extends Subsystem {
                 stop();
             }
         });
+    }
+
+    public void setState(WantedAction wanted_state) {
+        switch (wanted_state) {
+            case NONE:
+                mState = State.IDLE;
+                break;
+            case ELEVATE:
+                mState = State.ELEVATING;
+                break;
+            case SHOOT:
+                mState = State.SHOOTING;
+                break;
+            case REVERSE:
+                mState = State.REVERSING;
+                break;
+        }
+
     }
 
     private void runStateMachine() {
@@ -101,13 +132,6 @@ public class Hopper extends Subsystem {
                 mPeriodicIO.demand = 0;
                 break;
         }
-    }
-
-    public enum State {
-        ELEVATING,
-        SHOOTING,
-        REVERSING,
-        IDLE,
     }
 
     public static class PeriodicIO {
