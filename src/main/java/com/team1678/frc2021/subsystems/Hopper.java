@@ -15,7 +15,7 @@ public class Hopper implements Subsystem {
 
     private final PeriodicIO periodicIO;
 
-    private State state = State.IDLE;
+    private Action state = Action.IDLE;
 
     private Hopper() {
 
@@ -27,11 +27,24 @@ public class Hopper implements Subsystem {
 
     }
 
-    public void setState(State state) {
-        this.state = state;
+    public void setState(WantedAction state) {
+        switch (state) {
+            case NONE:
+                this.state = Action.IDLE;
+                break;
+            case SHOOT:
+                this.state = Action.SHOOTING;
+                break;
+            case ELEVATE:
+                this.state = Action.ELEVATING;
+                break;
+            case REVERSE:
+                this.state = Action.REVERSING;
+                break;
+        }
     }
 
-    public State getState() {
+    public Action getState() {
         return state;
     }
 
@@ -74,11 +87,18 @@ public class Hopper implements Subsystem {
         }
     }
 
-    public enum State {
+    public enum Action {
         ELEVATING,
         SHOOTING,
         REVERSING,
         IDLE,
+    }
+
+    public enum WantedAction {
+        ELEVATE,
+        SHOOT,
+        REVERSE,
+        NONE,
     }
 
     public static class PeriodicIO {
