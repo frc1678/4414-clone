@@ -21,6 +21,7 @@ public class Hopper extends Subsystem {
     private final PeriodicIO mPeriodicIO;
 
     private State mState = State.IDLE;
+    private WantedAction mWantedAction = WantedAction.NONE;
 
     public enum State {
         ELEVATING,
@@ -61,6 +62,10 @@ public class Hopper extends Subsystem {
         return mState;
     }
 
+    public WantedAction getWantedAction() {
+        return mWantedAction;
+    }
+
     public void writePeriodicOutputs() {
         mMaster.set(ControlMode.PercentOutput, mPeriodicIO.demand / 12.0);
         mSecondary.set(ControlMode.PercentOutput, mPeriodicIO.demand / 12.0);
@@ -95,6 +100,7 @@ public class Hopper extends Subsystem {
     }
 
     public void setState(WantedAction wanted_state) {
+        mWantedAction = wanted_state;
         switch (wanted_state) {
             case NONE:
                 mState = State.IDLE;
