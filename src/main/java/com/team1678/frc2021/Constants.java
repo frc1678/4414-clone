@@ -14,14 +14,6 @@ import com.team1678.frc2021.RobotContainer;
 import com.team1678.frc2021.lib.util.SwerveModuleConstants;
 
 public final class Constants {
-
-    /* Hopper constants */
-    public static final int masterElevatorMotorId = 69; // TODO: Update can ID
-    public static final int slaveElevatorMotorId = 70; // TODO: Update can ID
-    public static final int elevatorSensorPin = 69; // TODO: Update pin #
-    public static final double elevatingDemand = 7;
-    public static final double hellavatingDemand = 9;
-
     public static final double stickDeadband = 0.1;
 
     public static final class Swerve {
@@ -193,6 +185,20 @@ public final class Constants {
     public static final double kShooterI = 0.00004;
     public static final double kShooterD = 0.0;
     public static final double kShooterF = 0.05;
-    
-}
+
+    //Turret
+    public static int turretMotorId = 10;
+    public static int MaxRadAngle = 2;
+    public static int MinRadAngle = 2;
+    public static double RotationsPerTick;
+    public static int kTurretConstants;
+
+    /* Hopper constants */
+    public static final int masterElevatorMotorId = 69; // TODO: Update can ID
+    public static final int slaveElevatorMotorId = 70; // TODO: Update can ID
+    public static final int elevatorSensorPin = 69; // TODO: Update pin #
+    public static final double elevatingDemand = 7;
+    public static final double hellavatingDemand = 9;
+
+    }
 
