@@ -204,11 +204,13 @@ public final class Constants {
     public static int kTurretConstants;
 
     /* Hopper constants */
-    public static final int masterElevatorMotorId = 69; // TODO: Update can ID
-    public static final int slaveElevatorMotorId = 70; // TODO: Update can ID
+    public static final int hopperMotorId = 11; // TODO: Update can ID
+    public static final int elevatorMotorId = 1; // TODO: Update can ID
     public static final int elevatorSensorPin = 69; // TODO: Update pin #
     public static final double elevatingDemand = 7;
     public static final double hellavatingDemand = 9;
+
+	public static final double kLooperDt = 0;
 
     }
 
