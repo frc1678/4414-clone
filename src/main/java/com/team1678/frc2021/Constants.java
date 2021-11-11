@@ -183,6 +183,8 @@ public final class Constants {
         kHoodConstants.kAbsoluteEncoderID = 3;
     }
 
+    public static final double kHoodMinLimit = 15; //TODO: check value
+
     //Intake
     public static int masterIntakeMotorId = 5;
 
