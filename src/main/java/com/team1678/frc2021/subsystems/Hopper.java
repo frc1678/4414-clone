@@ -13,6 +13,8 @@ public class Hopper implements Subsystem {
     private final TalonFX mSecondary;
     private final DigitalInput mSensor;
 
+    private static Hopper mInstance;
+
     private final PeriodicIO periodicIO;
 
     private State state = State.IDLE;
@@ -25,6 +27,13 @@ public class Hopper implements Subsystem {
 
         periodicIO = new PeriodicIO();
 
+    }
+
+    public static synchronized Hopper getInstance() {
+        if (mInstance == null) {
+            mInstance = new Hopper();
+        }
+        return mInstance;
     }
 
     public void setState(State state) {

@@ -12,13 +12,21 @@ import edu.wpi.first.wpilibj.AnalogEncoder;
 
 public class Hood extends LinearServo {
     private static Hood mInstance;
+
     private Encoder mEncoder;
     private boolean mHoming = true;
     private Servo hoodServoA;
     private Servo hoodServoB;
 
+    public static synchronized Hood getInstance() {
+        if (mInstance == null) {
+            mInstance = new Hood();
+        }
+        return mInstance;
+    }
+
     //Create new Hood subsystem
-    private Hood(final ServoSubsystem.ServoSubsystemConstants constants) {
+    private Hood() {
         super(mInstance.getChannel(), mInstance.hashCode(), mInstance.getRaw());
         hoodServoA = new Servo(Constants.kHoodConstants.kHoodServoA);
         hoodServoB = new Servo(Constants.kHoodConstants.kHoodServoB);
