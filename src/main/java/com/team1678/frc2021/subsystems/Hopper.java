@@ -12,9 +12,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Hopper extends Subsystem {
 
-    private final TalonFX mMaster;
-    private final TalonFX mSecondary;
-    private final DigitalInput mSensor;
+    private final TalonFX mHopper;
+    private final TalonFX mElevator;
+    // private final DigitalInput mSensor;
+
+    private static double kHopperVoltage = -7.0;
+    private static double kElevatorVoltage = 7.0;
 
     private static Hopper mInstance;
 
@@ -39,9 +42,9 @@ public class Hopper extends Subsystem {
 
     private Hopper() {
 
-        mMaster = new TalonFX(Constants.masterElevatorMotorId);
-        mSecondary = new TalonFX(Constants.slaveElevatorMotorId);
-        mSensor = new DigitalInput(Constants.elevatorSensorPin);
+        mHopper = new TalonFX(Constants.hopperMotorId);
+        mElevator = new TalonFX(Constants.elevatorMotorId);
+        // mSensor = new DigitalInput(Constants.elevatorSensorPin);
 
         mPeriodicIO = new PeriodicIO();
 
@@ -67,13 +70,8 @@ public class Hopper extends Subsystem {
     }
 
     public void writePeriodicOutputs() {
-        mMaster.set(ControlMode.PercentOutput, mPeriodicIO.demand / 12.0);
-        mSecondary.set(ControlMode.PercentOutput, mPeriodicIO.demand / 12.0);
-    }
-
-    public void smartDashboard() {
-        SmartDashboard.putString("Hopper state", mState.toString());
-        SmartDashboard.putNumber("Hopper demand", mPeriodicIO.demand);
+        mHopper.set(ControlMode.PercentOutput, mPeriodicIO.hopperDemand / 12.0);
+        mElevator.set(ControlMode.PercentOutput, mPeriodicIO.elevatorDemand / 12.0);
     }
 
     @Override
@@ -122,33 +120,40 @@ public class Hopper extends Subsystem {
         switch (mState) {
             case ELEVATING:
                 // If ball has reached sensor set demand to zero
-                if (mSensor.get()) {
-                    mPeriodicIO.demand = 0;
-                } else {
-                    mPeriodicIO.demand = Constants.elevatingDemand;
-                }
+                // if (mSensor.get()) {
+                //     mPeriodicIO.demand = 0;
+                // } else {
+                //     mPeriodicIO.demand = Constants.elevatingDemand;
+                // }
+                mPeriodicIO.hopperDemand = kHopperVoltage;
+                mPeriodicIO.elevatorDemand = kElevatorVoltage;
                 break;
             case SHOOTING:
-                mPeriodicIO.demand = Constants.hellavatingDemand;
+                mPeriodicIO.hopperDemand = kHopperVoltage;
+                mPeriodicIO.elevatorDemand = kElevatorVoltage;
                 break;
             case REVERSING:
-                mPeriodicIO.demand = -Constants.elevatingDemand;
+                mPeriodicIO.hopperDemand = -kHopperVoltage;
+                mPeriodicIO.elevatorDemand = -kElevatorVoltage;
                 break;
             case IDLE:
-                mPeriodicIO.demand = 0;
+                mPeriodicIO.hopperDemand = 0;
+                mPeriodicIO.elevatorDemand = 0;
                 break;
         }
     }
 
     public static class PeriodicIO {
         // DEMAND
-        public double demand;
+        public double hopperDemand;
+        public double elevatorDemand;
     }
 
     @Override
     public void outputTelemetry() {
         SmartDashboard.putString("Hopper State", mState.toString());
-        SmartDashboard.putNumber("Hopper Demand", mPeriodicIO.demand);
+        SmartDashboard.putNumber("Hopper Demand", mPeriodicIO.hopperDemand);
+        SmartDashboard.putNumber("Elevator Demand", mPeriodicIO.elevatorDemand);
 
     }
 
