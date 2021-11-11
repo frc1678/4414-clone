@@ -1,17 +1,17 @@
 package com.team1678.frc2021.subsystems;
 
 import com.team1678.frc2021.Constants;
-
+import com.team1678.frc2021.loops.ILooper;
+import com.team1678.frc2021.loops.Loop;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj.Timer;
 
-public class Shooter implements Subsystem {
+public class Shooter extends Subsystem {
     private static Shooter mInstance;
 
     private final TalonFX mMaster;
@@ -94,39 +94,45 @@ public class Shooter implements Subsystem {
     }
 
     @Override
-    public void setDefaultCommand(Command defaultCommand) {
-        mPeriodicIO.timestamp = Timer.getFPGATimestamp();
+    public void registerEnabledLoops(ILooper enabledLooper) {
+        enabledLooper.register(new Loop() {
+            @Override
+            public void onStart(double timestamp) {
+            }
 
-        //for main wheel
-        mPeriodicIO.main_velocity = mMaster.getSelectedSensorVelocity() * kMainVelocityConversion;
-        mPeriodicIO.main_voltage = mMaster.getMotorOutputVoltage();
-        mPeriodicIO.main_current = mMaster.getStatorCurrent();
-        mPeriodicIO.main_temperature = mMaster.getTemperature();
+            @Override
+            public void onLoop(double timestamp) {
+            }
+
+            @Override
+            public void onStop(double timestamp) {
+            }
+        });
     }
 
     @Override
-    public Command getDefaultCommand() {
-        if (!mRunningManual) {
-            mMaster.set(ControlMode.Velocity, mPeriodicIO.main_demand / kMainVelocityConversion);
-        } else {
-            mMaster.set(ControlMode.PercentOutput, 0);
-        }
-        return CommandScheduler.getInstance().getDefaultCommand(this);
+    public void writePeriodicOutputs() {
+        mMaster.set(ControlMode.Velocity, mPeriodicIO.main_velocity / kMainVelocityConversion); //TODO: check between main and upper
     }
 
     @Override
-    public void periodic() {
-        synchronized (Shooter.this) {
-            SmartDashboard.putNumber("Main Wheel Velocity", mPeriodicIO.main_velocity);
-            SmartDashboard.putNumber("Main Wheel Current", mPeriodicIO.main_current);
-            SmartDashboard.putNumber("Main Wheel Goal", mPeriodicIO.main_demand);
-            SmartDashboard.putNumber("Main Wheel Temperature", mPeriodicIO.main_temperature);
-        }
+    public void outputTelemetry() {
+        SmartDashboard.putNumber("Shooter Velocity", mPeriodicIO.main_velocity);
+        SmartDashboard.putNumber("Shooter Demand", mPeriodicIO.main_demand);
+
+
     }
 
     @Override
-    public Command getCurrentCommand() {
-        return CommandScheduler.getInstance().requiring(this);
+    public void stop() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean checkSystem() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }
