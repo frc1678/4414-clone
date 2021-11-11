@@ -21,7 +21,7 @@ public final class Constants {
 	public static final int kButtonGamepadPort = 1;
 
     public static final class Swerve {
-        public static final int pigeonID = 1;
+        public static final int pigeonID = 23;
         public static final boolean invertGyro = true; // Always ensure Gyro is CCW+ CW-
 
         /* Drivetrain Constants */
@@ -33,8 +33,8 @@ public final class Constants {
         public static final double openLoopRamp = 0.25;
         public static final double closedLoopRamp = 0.0;
 
-        public static final double driveGearRatio = 1.0;
-        public static final double angleGearRatio = 1.0;
+        public static final double driveGearRatio = 6.86;
+        public static final double angleGearRatio = 12.8;
 
         public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
                 new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
@@ -54,13 +54,13 @@ public final class Constants {
         public static final boolean driveEnableCurrentLimit = true;
 
         /* Angle Motor PID Values */
-        public static final double angleKP = 0.3;
+        public static final double angleKP = 0.05;
         public static final double angleKI = 0.0;
         public static final double angleKD = 0.0;
         public static final double angleKF = 0.0;
 
         /* Drive Motor PID Values */
-        public static final double driveKP = 0.05;
+        public static final double driveKP = 0.5;
         public static final double driveKI = 0.0;
         public static final double driveKD = 0.0;
         public static final double driveKF = 0.0;
@@ -91,7 +91,7 @@ public final class Constants {
             public static final int driveMotorID = 13;
             public static final int angleMotorID = 9;
             public static final int canCoderID = 17;
-            public static final double angleOffset = 0;
+            public static final double angleOffset = 69;
             public static final SwerveModuleConstants constants =
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -101,7 +101,7 @@ public final class Constants {
             public static final int driveMotorID = 4;
             public static final int angleMotorID = 8;
             public static final int canCoderID = 18;
-            public static final double angleOffset = 0;
+            public static final double angleOffset = 108;
             public static final SwerveModuleConstants constants =
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -111,7 +111,7 @@ public final class Constants {
             public static final int driveMotorID = 16;
             public static final int angleMotorID = 12;
             public static final int canCoderID = 19;
-            public static final double angleOffset = 0;
+            public static final double angleOffset = 358;
             public static final SwerveModuleConstants constants =
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -121,7 +121,7 @@ public final class Constants {
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 5;
             public static final int canCoderID = 20;
-            public static final double angleOffset = 0;
+            public static final double angleOffset = 107;
             public static final SwerveModuleConstants constants =
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -185,8 +185,8 @@ public final class Constants {
     public static int masterIntakeMotorId = 7;
 
     //Shooter
-    public static final int kMasterFlywheelID = 2;
-    public static final int kSlaveFlywheelID = 15;
+    public static final int kMasterFlywheelID = 20;
+    public static final int kSlaveFlywheelID = 21;
     public static final double kShooterP = 0.2;
     public static final double kShooterI = 0.00004;
     public static final double kShooterD = 0.0;

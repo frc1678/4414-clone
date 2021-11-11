@@ -29,7 +29,7 @@ public class Superstructure extends Subsystem{
     }
 
     /* Required subsystem instances */
-    private final Hood mHood = Hood.getInstance();
+    // private final Hood mHood = Hood.getInstance();
     private final Hopper mHopper = Hopper.getInstance();
     private final Intake mIntake = Intake.getInstance();
     private final Shooter mShooter = Shooter.getInstance();
@@ -65,7 +65,7 @@ public class Superstructure extends Subsystem{
             if (scan) {
                 mHoodSetpoint = Constants.kHoodMinLimit + 10;
             } else {
-                mHoodSetpoint = mHood.getAngle();
+                // mHoodSetpoint = mHood.getAngle();
             }
         }
         mWantsScan = scan;
@@ -107,18 +107,18 @@ public class Superstructure extends Subsystem{
     }
 
     public void setSetpoints() {
-        double hood_value = mHood.getPosition();
+        // double hood_value = mHood.getPosition();
         double shooter_value = mShooter.getShooterRPM();
 
         Hopper.WantedAction hopper_state = mHopper.getWantedAction();
 
         if (mWantsTuck) {
-            hood_value = Constants.kHoodMinLimit;
+            // hood_value = Constants.kHoodMinLimit;
             shooter_value = 0.0;
         } else if (mWantsPrep) {
 
         } else if (mWantsShoot) {
-            hood_value = mHoodSetpoint;
+            // hood_value = mHoodSetpoint;
             shooter_value = mShooterSetpoint;
             hopper_state = WantedAction.SHOOT;
 
@@ -127,7 +127,7 @@ public class Superstructure extends Subsystem{
         }
 
         /* FOLLOW SETPOINT GOALS*/
-        mHood.setPosition(hood_value);
+        // mHood.setPosition(hood_value);
         mShooter.setVelocity(shooter_value);
         mHopper.setState(hopper_state);
     }

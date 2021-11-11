@@ -12,6 +12,7 @@ import com.team1678.frc2021.subsystems.Shooter;
 import com.team1678.frc2021.subsystems.Turret;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -28,15 +29,15 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
-  private final ControlBoard mControlBoard = ControlBoard.getInstance();
+  // private final ControlBoard mControlBoard = ControlBoard.getInstance();
 
-  private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
-  private final Superstructure mSuperstructure = Superstructure.getInstance();
-  private final Hood mHood = Hood.getInstance();
-  private final Hopper mHopper = Hopper.getInstance();
-  private final Intake mIntake = Intake.getInstance();
-  private final Shooter mShooter = Shooter.getInstance();
-  private final Turret mTurret = Turret.getInstance();
+  // private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
+  // private final Superstructure mSuperstructure = Superstructure.getInstance();
+  // private final Hood mHood = Hood.getInstance();
+  // private final Hopper mHopper = Hopper.getInstance();
+  // private final Intake mIntake = Intake.getInstance();
+  // private final Shooter mShooter = Shooter.getInstance();
+  // private final Turret mTurret = Turret.getInstance();
 
   public Robot() {
 
@@ -53,12 +54,12 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
-    mSubsystemManager.setSubsystems(
-      mHopper,
-      mIntake,
-      mShooter,
-      mTurret
-    ); 
+    // mSubsystemManager.setSubsystems(
+    //   // mHopper,
+    //   // mIntake,
+    //   // mShooter,
+    //   // mTurret
+    // ); 
     //TODO: figure out how to add hood
 
 
@@ -78,6 +79,7 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    SmartDashboard.putNumber("Controller Rotation",m_robotContainer.getRotationAxis());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -118,37 +120,37 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    if (mControlBoard.getIntake()) {
+    // if (mControlBoard.getIntake()) {
 
-      mIntake.setState(Intake.WantedAction.INTAKE);
-      mHopper.setState(Hopper.WantedAction.ELEVATE);
+    //   mIntake.setState(Intake.WantedAction.INTAKE);
+    //   mHopper.setState(Hopper.WantedAction.ELEVATE);
 
-    } else if (mControlBoard.getReverseIntake()) {
+    // } else if (mControlBoard.getReverseIntake()) {
 
-        mIntake.setState(Intake.WantedAction.REVERSE);
+    //     mIntake.setState(Intake.WantedAction.REVERSE);
 
-    } else if (mControlBoard.getReverseHopper()) {
+    // } else if (mControlBoard.getReverseHopper()) {
 
-        mHopper.setState(Hopper.WantedAction.REVERSE);
+    //     mHopper.setState(Hopper.WantedAction.REVERSE);
 
-    } else if (mControlBoard.getTurnOffIntake()) {
+    // } else if (mControlBoard.getTurnOffIntake()) {
 
-        mIntake.setState(Intake.WantedAction.NONE);
-        mHopper.setState(Hopper.WantedAction.NONE);
+    //     mIntake.setState(Intake.WantedAction.NONE);
+    //     mHopper.setState(Hopper.WantedAction.NONE);
 
-    } else if (mControlBoard.getTuck()) {
+    // } else if (mControlBoard.getTuck()) {
 
-        mSuperstructure.setWantTuck(true);
+    //     mSuperstructure.setWantTuck(true);
         
-    } else if (mControlBoard.getUntuck()) {
+    // } else if (mControlBoard.getUntuck()) {
 
-        mSuperstructure.setWantTuck(false);
+    //     mSuperstructure.setWantTuck(false);
 
-    } else if (mControlBoard.getShoot()) {
+    // } else if (mControlBoard.getShoot()) {
 
-        mSuperstructure.setWantShoot();
+    //     mSuperstructure.setWantShoot();
 
-    }
+    // }
 
   }
 
