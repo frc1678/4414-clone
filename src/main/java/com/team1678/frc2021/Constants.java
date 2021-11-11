@@ -22,11 +22,11 @@ public final class Constants {
 
     public static final class Swerve {
         public static final int pigeonID = 23;
-        public static final boolean invertGyro = true; // Always ensure Gyro is CCW+ CW-
+        public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(1.0);
-        public static final double wheelBase = Units.inchesToMeters(1.0);
+        public static final double trackWidth = Units.inchesToMeters(16.0);
+        public static final double wheelBase = Units.inchesToMeters(16.0);
         public static final double wheelDiameter = Units.inchesToMeters(4.0);
         public static final double wheelCircumference = wheelDiameter * Math.PI;
 
@@ -83,45 +83,49 @@ public final class Constants {
         public static final boolean angleMotorInvert = true;
 
         /* Angle Encoder Invert */
-        public static final boolean canCoderInvert = false;
+        public static final boolean canCoderInvert = true;
 
         /* Module Specific Constants */
-        /* Front Left Module - Module 0 */
-        public static final class Mod0 {
-            public static final int driveMotorID = 13;
-            public static final int angleMotorID = 9;
-            public static final int canCoderID = 17;
-            public static final double angleOffset = 69;
-            public static final SwerveModuleConstants constants =
-                    new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
-        }
 
-        /* Front Right Module - Module 1 */
-        public static final class Mod1 {
+        /* Front Right Module - Module 0 */
+        public static final class Mod0 {
             public static final int driveMotorID = 4;
             public static final int angleMotorID = 8;
             public static final int canCoderID = 18;
-            public static final double angleOffset = 108;
+            public static final double angleOffset = 252;
             public static final SwerveModuleConstants constants =
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
 
-        /* Back Left Module - Module 2 */
+        /* Front Left Module - Module 1 */
+        public static final class Mod1 {
+            public static final int driveMotorID = 13;
+            public static final int angleMotorID = 9;
+            public static final int canCoderID = 17;
+            public static final double angleOffset = 292;
+            public static final SwerveModuleConstants constants =
+                    new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+        }
+
+
+
+        /* Back Right Module - Module 2 */
         public static final class Mod2 {
-            public static final int driveMotorID = 16;
-            public static final int angleMotorID = 12;
-            public static final int canCoderID = 19;
-            public static final double angleOffset = 358;
-            public static final SwerveModuleConstants constants =
-                    new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
-        }
-
-        /* Back Right Module - Module 3 */
-        public static final class Mod3 {
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 5;
             public static final int canCoderID = 20;
-            public static final double angleOffset = 107;
+            public static final double angleOffset = 251;
+            public static final SwerveModuleConstants constants =
+                    new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+        }
+
+
+        /* Back Left Module - Module 3 */
+        public static final class Mod3 {
+            public static final int driveMotorID = 16;
+            public static final int angleMotorID = 12;
+            public static final int canCoderID = 19;
+            public static final double angleOffset = 2.3;
             public static final SwerveModuleConstants constants =
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }

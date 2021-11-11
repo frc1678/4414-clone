@@ -47,14 +47,8 @@ public class Swerve extends SubsystemBase {
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-        if(isSnapping) {
-            if(Math.abs(rotation) == 0.0) {
-                maybeStopSnap(false);
-                rotation = calculateSnapVectors();
-            } else {
-                maybeStopSnap(true);
-            }
-        } 
+
+        SmartDashboard.putNumber("Swerve Point Turn Rotation Number Thing", rotation);
         SwerveModuleState[] swerveModuleStates =
             Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
