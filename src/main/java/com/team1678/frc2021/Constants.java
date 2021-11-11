@@ -16,13 +16,17 @@ import com.team1678.frc2021.lib.util.SwerveModuleConstants;
 public final class Constants {
 
     /* Hopper constants */
-    public static final int masterElevatorMotorId = 69; // TODO: Update can ID
-    public static final int slaveElevatorMotorId = 70; // TODO: Update can ID
+    public static final int masterElevatorMotorId = 11; // TODO: Update can ID
+    public static final int slaveElevatorMotorId = 1; // TODO: Update can ID
     public static final int elevatorSensorPin = 69; // TODO: Update pin #
     public static final double elevatingDemand = 7;
     public static final double hellavatingDemand = 9;
 
     public static final double stickDeadband = 0.1;
+
+    // Control Board
+	public static final double kJoystickThreshold = 0.2;
+	public static final int kButtonGamepadPort = 1;
 
     public static final class Swerve {
         public static final int pigeonID = 1;
@@ -92,9 +96,9 @@ public final class Constants {
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */
         public static final class Mod0 {
-            public static final int driveMotorID = 1;
-            public static final int angleMotorID = 1;
-            public static final int canCoderID = 1;
+            public static final int driveMotorID = 13;
+            public static final int angleMotorID = 9;
+            public static final int canCoderID = 17;
             public static final double angleOffset = 0;
             public static final SwerveModuleConstants constants =
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
@@ -102,9 +106,9 @@ public final class Constants {
 
         /* Front Right Module - Module 1 */
         public static final class Mod1 {
-            public static final int driveMotorID = 1;
-            public static final int angleMotorID = 1;
-            public static final int canCoderID = 1;
+            public static final int driveMotorID = 4;
+            public static final int angleMotorID = 8;
+            public static final int canCoderID = 18;
             public static final double angleOffset = 0;
             public static final SwerveModuleConstants constants =
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
@@ -112,9 +116,9 @@ public final class Constants {
 
         /* Back Left Module - Module 2 */
         public static final class Mod2 {
-            public static final int driveMotorID = 1;
-            public static final int angleMotorID = 1;
-            public static final int canCoderID = 1;
+            public static final int driveMotorID = 16;
+            public static final int angleMotorID = 12;
+            public static final int canCoderID = 19;
             public static final double angleOffset = 0;
             public static final SwerveModuleConstants constants =
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
@@ -122,9 +126,9 @@ public final class Constants {
 
         /* Back Right Module - Module 3 */
         public static final class Mod3 {
-            public static final int driveMotorID = 1;
-            public static final int angleMotorID = 1;
-            public static final int canCoderID = 1;
+            public static final int driveMotorID = 2;
+            public static final int angleMotorID = 5;
+            public static final int canCoderID = 20;
             public static final double angleOffset = 0;
             public static final SwerveModuleConstants constants =
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
@@ -186,7 +190,7 @@ public final class Constants {
     public static final double kHoodMinLimit = 15; //TODO: check value
 
     //Intake
-    public static int masterIntakeMotorId = 5;
+    public static int masterIntakeMotorId = 7;
 
     //Shooter
     public static final int kMasterFlywheelID = 2;
