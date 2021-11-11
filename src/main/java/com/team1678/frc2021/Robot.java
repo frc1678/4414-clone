@@ -5,6 +5,7 @@
 package com.team1678.frc2021;
 
 import com.team1678.frc2021.controlboard.ControlBoard;
+import com.team1678.frc2021.loops.Looper;
 import com.team1678.frc2021.subsystems.Hood;
 import com.team1678.frc2021.subsystems.Hopper;
 import com.team1678.frc2021.subsystems.Intake;
@@ -29,15 +30,20 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
-  // private final ControlBoard mControlBoard = ControlBoard.getInstance();
+  private final ControlBoard mControlBoard = ControlBoard.getInstance();
 
-  // private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
+  private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
   // private final Superstructure mSuperstructure = Superstructure.getInstance();
   // private final Hood mHood = Hood.getInstance();
-  // private final Hopper mHopper = Hopper.getInstance();
-  // private final Intake mIntake = Intake.getInstance();
+  private final Hopper mHopper = Hopper.getInstance();
+  private final Intake mIntake = Intake.getInstance();
   // private final Shooter mShooter = Shooter.getInstance();
   // private final Turret mTurret = Turret.getInstance();
+
+    // loopers
+    private final Looper mEnabledLooper = new Looper();
+    private final Looper mDisabledLooper = new Looper();
+    
 
   public Robot() {
 
@@ -54,12 +60,16 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
-    // mSubsystemManager.setSubsystems(
-    //   // mHopper,
-    //   // mIntake,
-    //   // mShooter,
-    //   // mTurret
-    // ); 
+    mSubsystemManager.setSubsystems(
+       mHopper,
+       mIntake
+       // mShooter,
+       // mTurret
+    ); 
+
+    mSubsystemManager.registerEnabledLoops(mEnabledLooper);
+    mSubsystemManager.registerDisabledLoops(mDisabledLooper);
+
     //TODO: figure out how to add hood
 
 
@@ -78,13 +88,20 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
+    mSubsystemManager.outputToSmartDashboard();
+    mEnabledLooper.outputToSmartDashboard();
+    
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Controller Rotation",m_robotContainer.getRotationAxis());
+    SmartDashboard.putBoolean("Intake Command", mControlBoard.getIntake());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    mEnabledLooper.stop();
+    mDisabledLooper.start();
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -98,6 +115,10 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    mDisabledLooper.stop();
+    mEnabledLooper.start();
+
   }
 
   /** This function is called periodically during autonomous. */
@@ -114,22 +135,24 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
+    mDisabledLooper.stop();
+    mEnabledLooper.start();
+
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
 
-    // if (mControlBoard.getIntake()) {
+    if (mControlBoard.getIntake()) {
+      mIntake.setState(Intake.WantedAction.INTAKE);
+      mHopper.setState(Hopper.WantedAction.ELEVATE);
 
-    //   mIntake.setState(Intake.WantedAction.INTAKE);
-    //   mHopper.setState(Hopper.WantedAction.ELEVATE);
+    } else if (mControlBoard.getReverseIntake()) {
 
-    // } else if (mControlBoard.getReverseIntake()) {
+      mIntake.setState(Intake.WantedAction.REVERSE);
 
-    //     mIntake.setState(Intake.WantedAction.REVERSE);
-
-    // } else if (mControlBoard.getReverseHopper()) {
+   } //else if (mControlBoard.getReverseHopper()) {
 
     //     mHopper.setState(Hopper.WantedAction.REVERSE);
 
@@ -150,7 +173,11 @@ public class Robot extends TimedRobot {
 
     //     mSuperstructure.setWantShoot();
 
-    // }
+    // } 
+    else {
+      mIntake.setState(Intake.WantedAction.NONE);
+      mHopper.setState(Hopper.WantedAction.NONE);
+    }
 
   }
 
@@ -158,6 +185,8 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    mDisabledLooper.stop();
+    mEnabledLooper.stop();
   }
 
   /** This function is called periodically during test mode. */
