@@ -15,7 +15,7 @@ public class Shooter implements Subsystem {
     private static Shooter mInstance;
 
     private final TalonFX mMaster;
-    private final TalonFX mSlave;
+    private TalonFX mSlave;
 
     private boolean mRunningManual = false;
     private static double kUpperVelocityConversion = 75.0 / 512.0;
@@ -38,7 +38,7 @@ public class Shooter implements Subsystem {
 
     private Shooter() {
         mMaster = new TalonFX(Constants.kMasterFlywheelID);
-        mSlave = new TalonFX(Constants.kSlaveFlywheelID);
+        mSlave.follow(mMaster);
 
         mPeriodicIO = new PeriodicIO();
 
