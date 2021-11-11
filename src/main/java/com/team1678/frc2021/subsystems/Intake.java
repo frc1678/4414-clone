@@ -71,11 +71,6 @@ public class Intake implements Subsystem {
     public void runStateMachine() {
         switch (mState) {
             case INTAKING:
-                if (mPeriodicIO.intake_out) {
-                    mPeriodicIO.demand = kIntakingVoltage;
-                } else {
-                    mPeriodicIO.demand = 0.0;
-                }
                 mPeriodicIO.deploy = true;
                 break;
             case IDLE:
