@@ -4,6 +4,13 @@
 
 package com.team1678.frc2021;
 
+import com.team1678.frc2021.controlboard.ControlBoard;
+import com.team1678.frc2021.subsystems.Hood;
+import com.team1678.frc2021.subsystems.Hopper;
+import com.team1678.frc2021.subsystems.Intake;
+import com.team1678.frc2021.subsystems.Shooter;
+import com.team1678.frc2021.subsystems.Turret;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -21,6 +28,20 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  private final ControlBoard mControlBoard = ControlBoard.getInstance();
+
+  private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
+  private final Superstructure mSuperstructure = Superstructure.getInstance();
+  private final Hood mHood = Hood.getInstance();
+  private final Hopper mHopper = Hopper.getInstance();
+  private final Intake mIntake = Intake.getInstance();
+  private final Shooter mShooter = Shooter.getInstance();
+  private final Turret mTurret = Turret.getInstance();
+
+  public Robot() {
+
+  }
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -31,6 +52,16 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    mSubsystemManager.setSubsystems(
+      mHopper,
+      mIntake,
+      mShooter,
+      mTurret
+    ); 
+    //TODO: figure out how to add hood
+
+
   }
 
   /**
@@ -80,11 +111,46 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+
+    if (mControlBoard.getIntake()) {
+
+      mIntake.setState(Intake.WantedAction.INTAKE);
+      mHopper.setState(Hopper.WantedAction.ELEVATE);
+
+    } else if (mControlBoard.getReverseIntake()) {
+
+        mIntake.setState(Intake.WantedAction.REVERSE);
+
+    } else if (mControlBoard.getReverseHopper()) {
+
+        mHopper.setState(Hopper.WantedAction.REVERSE);
+
+    } else if (mControlBoard.getTurnOffIntake()) {
+
+        mIntake.setState(Intake.WantedAction.NONE);
+        mHopper.setState(Hopper.WantedAction.NONE);
+
+    } else if (mControlBoard.getTuck()) {
+
+        mSuperstructure.setWantTuck(true);
+        
+    } else if (mControlBoard.getUntuck()) {
+
+        mSuperstructure.setWantTuck(false);
+
+    } else if (mControlBoard.getShoot()) {
+
+        mSuperstructure.setWantShoot();
+
+    }
+
+  }
 
   @Override
   public void testInit() {
