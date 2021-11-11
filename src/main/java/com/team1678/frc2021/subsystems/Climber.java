@@ -43,19 +43,19 @@ public class Climber implements Subsystem {
     private Climber() {
         mMaster = new TalonFX(Constants.motorClimberID);
         mMaster.set(ControlMode.PercentOutput, 0);
-        mMaster.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
+        mMaster.configVoltageCompSaturation(12.0, Constants.kLongCANTimeouts);
         mMaster.enableVoltageCompensation(true);
 
-        mMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kLongCANTimeoutMs);
+        mMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kLongCANTimeouts);
 
-        mMaster.configMotionAcceleration(40000, Constants.kLongCANTimeoutMs);
-        mMaster.configMotionCruiseVelocity(30000, Constants.kLongCANTimeoutMs);
+        mMaster.configMotionAcceleration(40000, Constants.kLongCANTimeouts);
+        mMaster.configMotionCruiseVelocity(30000, Constants.kLongCANTimeouts);
         mMaster.config_kP(0, 0.5);
         mMaster.config_kI(0, 0);
         mMaster.config_kD(0, 0);
         mMaster.config_kF(0, 0.05);
 
-        mMaster.setSelectedSensorPosition(0, 0, Constants.kLongCANTimeoutMs);
+        mMaster.setSelectedSensorPosition(0, 0, Constants.kLongCANTimeouts);
 
     }
 
@@ -104,6 +104,7 @@ public class Climber implements Subsystem {
         switch (mState) {
             case IDLE:
                 mPeriodicIO.demand = kIdleVoltage;
+                break;
             case RETRACTING:
                 mPeriodicIO.demand = kRetractingVoltage;
                 break;
@@ -114,8 +115,9 @@ public class Climber implements Subsystem {
                 break;
             case CLIMBING:
                 mPeriodicIO.demand = kClimbingVoltage;
-                }
+                break;
         }
+    }
 
     public void setState(WantedAction wanted_state) {
         mWantedAction = wanted_state;
@@ -123,8 +125,10 @@ public class Climber implements Subsystem {
         switch (wanted_state) {
             case NONE:
                 mState = State.IDLE;
+                break;
             case RETRACT:
                 mState = State.RETRACTING;
+                break;
             case EXTEND:
                 mState = State.EXTENDING;
                 break;

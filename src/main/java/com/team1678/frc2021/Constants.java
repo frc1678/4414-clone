@@ -181,8 +181,8 @@ public final class Constants {
     public static final double kShooterF = 0.05;
   
     //Climber
-    public static final int motorClimberID;
-    public static final int kLongCANTimeouts;
+    public static final int motorClimberID = 3;
+    public static final int kLongCANTimeouts = 100;
     
 }
 
