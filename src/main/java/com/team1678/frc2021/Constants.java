@@ -187,7 +187,7 @@ public final class Constants {
     public static final double kShooterF = 0.05;
 
     //Turret
-    public static int turretMotorId = 3;
+    public static int turretMotorId = 10;
     public static int MaxRadAngle = 2;
     public static int MinRadAngle = 2;
     public static double RotationsPerTick;
