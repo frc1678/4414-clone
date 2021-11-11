@@ -15,9 +15,9 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class Climber implements Subsystem {
 
-    private static final double kRetractingVoltage = 200.0;
+    private static final double kRetractingVoltage = -2.0;
     private static final double kExtendingVoltage = 2.0;
-    private static final double kClimbingVoltage = -2.0;
+    private static final double kClimbingVoltage = -4.0;
     private static final double kIdleVoltage = 0.0;
     private static Climber mInstance;
     private double mInitialTime;
@@ -79,6 +79,7 @@ public class Climber implements Subsystem {
     public void simulationPeriodic() {
         synchronized (Climber.this) {
             runStateMachine();
+            writePeriodicOutputs();
         }
     }
 
@@ -136,6 +137,10 @@ public class Climber implements Subsystem {
                 mState = State.CLIMBING;
                 break;
         }
+    }
+
+    public void writePeriodicOutputs() {
+        mMaster.set(ControlMode.PercentOutput, mPeriodicIO.demand / 12.0);
     }
 
     public static class PeriodicIO {
