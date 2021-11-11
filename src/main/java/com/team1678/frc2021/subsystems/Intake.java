@@ -11,13 +11,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Intake extends Subsystem {
 
-    private static double kIntakingVoltage = 9.0;
-    private static double kReversingVoltage = -9.0;
+    private static double kIntakingVoltage = -7.0;
+    private static double kReversingVoltage = 7.0;
     private static double kIdleVoltage = 0.0;
-    private TalonFX mMaster = new TalonFX(Constants.masterIntakeMotorId);
+    private TalonFX mMaster;
     private static double mCurrent;
 
     private static Intake mInstance;
+
+    private Intake() {
+        mMaster = new TalonFX(Constants.masterIntakeMotorId);
+    }
 
 
     public enum WantedAction {
@@ -93,23 +97,19 @@ public class Intake extends Subsystem {
     public void runStateMachine() {
         switch (mState) {
             case INTAKING:
-                if (mPeriodicIO.intake_out) {
-                    mPeriodicIO.demand = kIntakingVoltage;
-                } else {
-                    mPeriodicIO.demand = 0.0;
-                }
-                mPeriodicIO.deploy = true;
+                mPeriodicIO.demand = kIntakingVoltage;
+                // if (mPeriodicIO.intake_out) {
+                //     mPeriodicIO.demand = kIntakingVoltage;
+                // } else {
+                //     mPeriodicIO.demand = 0.0;
+                // }
+                // mPeriodicIO.deploy = true;
                 break;
             case IDLE:
                 mPeriodicIO.demand = kIdleVoltage;
-                mPeriodicIO.deploy = false;
                 break;
             case REVERSING:
-                if (mPeriodicIO.intake_out) {
-                    mPeriodicIO.demand = kReversingVoltage;
-                } else {
-                    mPeriodicIO.demand = 0.0;
-                }
+                mPeriodicIO.demand = kReversingVoltage;
         }
     }
 
