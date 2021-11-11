@@ -3,11 +3,14 @@ package com.team1678.frc2021.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.team1678.frc2021.Constants;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import com.team1678.frc2021.loops.ILooper;
+import com.team1678.frc2021.loops.Loop;
 
-public class Hopper implements Subsystem {
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+public class Hopper extends Subsystem {
 
     private final TalonFX mMaster;
     private final TalonFX mSecondary;
@@ -15,9 +18,9 @@ public class Hopper implements Subsystem {
 
     private static Hopper mInstance;
 
-    private final PeriodicIO periodicIO;
+    private final PeriodicIO mPeriodicIO;
 
-    private State state = State.IDLE;
+    private State mState = State.IDLE;
 
     private Hopper() {
 
@@ -25,7 +28,7 @@ public class Hopper implements Subsystem {
         mSecondary = new TalonFX(Constants.slaveElevatorMotorId);
         mSensor = new DigitalInput(Constants.elevatorSensorPin);
 
-        periodicIO = new PeriodicIO();
+        mPeriodicIO = new PeriodicIO();
 
     }
 
@@ -37,48 +40,65 @@ public class Hopper implements Subsystem {
     }
 
     public void setState(State state) {
-        this.state = state;
+        this.mState = state;
     }
 
     public State getState() {
-        return state;
-    }
-
-    @Override
-    public void periodic() {
-        runStateMachine();
-        writePeriodicOutputs();
-        smartDashboard();
+        return mState;
     }
 
     public void writePeriodicOutputs() {
-        mMaster.set(ControlMode.PercentOutput, periodicIO.demand / 12.0);
-        mSecondary.set(ControlMode.PercentOutput, periodicIO.demand / 12.0);
+        mMaster.set(ControlMode.PercentOutput, mPeriodicIO.demand / 12.0);
+        mSecondary.set(ControlMode.PercentOutput, mPeriodicIO.demand / 12.0);
     }
 
     public void smartDashboard() {
-        SmartDashboard.putString("Hopper state", state.toString());
-        SmartDashboard.putNumber("Hopper demand", periodicIO.demand);
+        SmartDashboard.putString("Hopper state", mState.toString());
+        SmartDashboard.putNumber("Hopper demand", mPeriodicIO.demand);
+    }
+
+    @Override
+    public void registerEnabledLoops(ILooper enabledLooper) {
+        enabledLooper.register(new Loop() {
+            @Override
+            public void onStart(double timestamp) {
+                mState = State.IDLE;
+            }
+
+            @Override
+            public void onLoop(double timestamp) {
+                synchronized (Hopper.this) {
+                    runStateMachine();
+
+                }
+            }
+
+            @Override
+            public void onStop(double timestamp) {
+                mState = State.IDLE;
+                stop();
+            }
+        });
     }
 
     private void runStateMachine() {
-        switch (state) {
+        switch (mState) {
             case ELEVATING:
                 // If ball has reached sensor set demand to zero
                 if (mSensor.get()) {
-                    periodicIO.demand = 0;
+                    mPeriodicIO.demand = 0;
                 } else {
-                    periodicIO.demand = Constants.elevatingDemand;
+                    mPeriodicIO.demand = Constants.elevatingDemand;
                 }
                 break;
             case SHOOTING:
-                periodicIO.demand = Constants.hellavatingDemand;
+                mPeriodicIO.demand = Constants.hellavatingDemand;
                 break;
             case REVERSING:
-                periodicIO.demand = -Constants.elevatingDemand;
+                mPeriodicIO.demand = -Constants.elevatingDemand;
                 break;
             case IDLE:
-                periodicIO.demand = 0;
+                mPeriodicIO.demand = 0;
                 break;
         }
     }
@@ -93,6 +113,25 @@ public class Hopper implements Subsystem {
     public static class PeriodicIO {
         // DEMAND
         public double demand;
+    }
+
+    @Override
+    public void outputTelemetry() {
+        SmartDashboard.putString("Hopper State", mState.toString());
+        SmartDashboard.putNumber("Hopper Demand", mPeriodicIO.demand);
+
+    }
+
+    @Override
+    public void stop() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean checkSystem() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 
