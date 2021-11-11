@@ -5,7 +5,11 @@ import com.ctre.phoenix.Util;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+
 import com.team1678.frc2021.Constants;
+import com.team1678.frc2021.loops.ILooper;
+import com.team1678.frc2021.loops.Loop;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -14,7 +18,8 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 
-public class Turret implements Subsystem {
+public class Turret extends Subsystem {
+
     private static Turret mInstance;
     private Encoder mturretEncoder;
     private double mOffset = 0;
@@ -66,7 +71,27 @@ public class Turret implements Subsystem {
         }.checkSystem();
     }
 
-    public synchronized void autonomousPeriodic() {
+    @Override
+    public void registerEnabledLoops(ILooper enabledLooper) {
+        enabledLooper.register(new Loop() {
+            @Override
+            public void onStart(double timestamp) {
+            }
+
+            @Override
+            public void onLoop(double timestamp) {
+                synchronized (Turret.this) {
+                }
+            }
+
+            @Override
+            public void onStop(double timestamp) {
+            }
+        });
+    }
+
+    @Override
+    public synchronized void readPeriodicInputs() {
         if(mHoming) {
             System.out.println("is calibrated");
             mturretEncoder.reset();
@@ -97,7 +122,20 @@ public class Turret implements Subsystem {
     }
 
     @Override
-    public void periodic() {
-        // Runs every tick
+    public void outputTelemetry() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void stop() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean checkSystem() {
+        // TODO Auto-generated method stub
+        return false;
     }
 }
