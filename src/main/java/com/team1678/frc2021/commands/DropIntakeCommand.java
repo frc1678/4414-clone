@@ -13,9 +13,10 @@ public class DropIntakeCommand extends CommandBase {
 @Override
 public void initialize() {
     //set turret to 90 degrees 
+    private double mTurretSetpoint = -90.0;
 }
 
 @Override
-public boolean isFinished() {
-    //return Turret.getInstance().getStart
+public boolean execute() {
+    mSuperstructure.enableTurret(true);
 }
