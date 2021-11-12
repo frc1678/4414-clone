@@ -62,9 +62,9 @@ public class GamepadButtonControlBoard {
         return mController.getTrigger(Side.LEFT);
     }
 
-    public boolean getReverseHopper() {
-        return mController.getController().getBumper(Hand.kLeft);
-    }
+    // public boolean getReverseHopper() {
+    //     return mController.getController().getBumper(Hand.kLeft);
+    // }
 
     public boolean getTurnOffIntake() {
         return mController.getController().getBumper(Hand.kRight);
@@ -83,7 +83,24 @@ public class GamepadButtonControlBoard {
     }
 
     public boolean getShoot() {
-        return mController.getController().getYButtonPressed();
+        return mController.getController().getBumper(Hand.kLeft);
+    }
+
+    public boolean climbMode() {
+        return mController.getButton(CustomXboxController.Button.LB) && mController.getButton(CustomXboxController.Button.RB)  && 
+        mController.getTrigger(CustomXboxController.Side.LEFT) &&  mController.getTrigger(CustomXboxController.Side.RIGHT);
+    }
+
+    public int getClimberJog(){
+        int povread = mController.getController().getPOV();
+        switch(povread){
+            case 0:
+                return 1;
+            case 180:
+                return -1;
+            default:
+                return 0;
+        }
     }
 
 }

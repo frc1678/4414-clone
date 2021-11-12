@@ -52,4 +52,12 @@ public class ControlBoard {
     public boolean getShoot() {
         return mButtonControlBoard.getShoot();
     }
+
+    public boolean climbMode() {
+        return mButtonControlBoard.climbMode();
+    }
+
+    public int getClimberJog() {
+        return mButtonControlBoard.getClimberJog();
+    }
 }
