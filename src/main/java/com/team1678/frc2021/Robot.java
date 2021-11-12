@@ -4,6 +4,7 @@
 
 package com.team1678.frc2021;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.team1678.frc2021.controlboard.ControlBoard;
 import com.team1678.frc2021.loops.Looper;
 import com.team1678.frc2021.subsystems.Climber;
@@ -99,6 +100,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Controller Rotation",m_robotContainer.getRotationAxis());
     SmartDashboard.putBoolean("Intake Command", mControlBoard.getIntake());
+    SmartDashboard.putBoolean("Climb Mode", climbMode);
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -142,6 +144,8 @@ public class Robot extends TimedRobot {
 
     mDisabledLooper.stop();
     mEnabledLooper.start();
+
+    mClimber.setBrakeMode(true);
 
   }
 
@@ -191,6 +195,8 @@ public class Robot extends TimedRobot {
         mShooter.setVelocity(0);
       }
     } else {
+      mIntake.setState(Intake.WantedAction.NONE);
+      mHopper.setState(Hopper.WantedAction.NONE);
 
       Climber.WantedAction climber_action = Climber.WantedAction.NONE;
 

@@ -29,9 +29,9 @@ public class ControlBoard {
         return mButtonControlBoard.getReverseIntake();
     }
 
-    public boolean getReverseHopper() {
-        return mButtonControlBoard.getReverseHopper();
-    }
+    // public boolean getReverseHopper() {
+    //     return mButtonControlBoard.getReverseHopper();
+    // }
 
     public boolean getTurnOffIntake() {
         return mButtonControlBoard.getTurnOffIntake();
