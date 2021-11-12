@@ -14,40 +14,33 @@ public class Hopper extends Subsystem {
 
     private final TalonFX mHopper;
     private final TalonFX mElevator;
-    // private final DigitalInput mSensor;
 
     private static double kHopperVoltage = -7.0;
     private static double kElevatorVoltage = 7.0;
 
     private static Hopper mInstance;
-
-    private final PeriodicIO mPeriodicIO;
+    private static PeriodicIO mPeriodicIO = new PeriodicIO();
 
     private State mState = State.IDLE;
     private WantedAction mWantedAction = WantedAction.NONE;
 
+    public enum WantedAction {
+        // INDEX,
+        FEED,
+        REVERSE,
+        NONE
+    }
+    
     public enum State {
-        ELEVATING,
-        SHOOTING,
+        // INDEXING,
+        FEEDING,
         REVERSING,
         IDLE,
     }
 
-    public enum WantedAction {
-        ELEVATE,
-        SHOOT,
-        REVERSE,
-        NONE
-    }
-
     private Hopper() {
-
         mHopper = new TalonFX(Constants.hopperMotorId);
         mElevator = new TalonFX(Constants.elevatorMotorId);
-        // mSensor = new DigitalInput(Constants.elevatorSensorPin);
-
-        mPeriodicIO = new PeriodicIO();
-
     }
 
     public static synchronized Hopper getInstance() {
@@ -69,9 +62,14 @@ public class Hopper extends Subsystem {
         return mWantedAction;
     }
 
+    @Override
+    public synchronized void readPeriodicInputs() {
+    }
+
+    @Override
     public void writePeriodicOutputs() {
-        mHopper.set(ControlMode.PercentOutput, mPeriodicIO.hopperDemand / 12.0);
-        mElevator.set(ControlMode.PercentOutput, mPeriodicIO.elevatorDemand / 12.0);
+        mHopper.set(ControlMode.PercentOutput, mPeriodicIO.hopper_demand / 12.0);
+        mElevator.set(ControlMode.PercentOutput, mPeriodicIO.elevator_demand / 12.0);
     }
 
     @Override
@@ -103,11 +101,13 @@ public class Hopper extends Subsystem {
             case NONE:
                 mState = State.IDLE;
                 break;
-            case ELEVATE:
-                mState = State.ELEVATING;
+            /*
+            case INDEX:
+                mState = State.INDEXING;
                 break;
-            case SHOOT:
-                mState = State.SHOOTING;
+            */
+            case FEED:
+                mState = State.FEEDING;
                 break;
             case REVERSE:
                 mState = State.REVERSING;
@@ -118,43 +118,25 @@ public class Hopper extends Subsystem {
 
     private void runStateMachine() {
         switch (mState) {
-            case ELEVATING:
-                // If ball has reached sensor set demand to zero
-                // if (mSensor.get()) {
-                //     mPeriodicIO.demand = 0;
-                // } else {
-                //     mPeriodicIO.demand = Constants.elevatingDemand;
-                // }
-                mPeriodicIO.hopperDemand = kHopperVoltage;
-                mPeriodicIO.elevatorDemand = kElevatorVoltage;
+            /*
+            case INDEXING:
+                mPeriodicIO.hopper_demand = kHopperVoltage;
+                mPeriodicIO.elevator_demand = kElevatorVoltage;                
                 break;
-            case SHOOTING:
-                mPeriodicIO.hopperDemand = kHopperVoltage;
-                mPeriodicIO.elevatorDemand = kElevatorVoltage;
+            */
+            case FEEDING:
+                mPeriodicIO.hopper_demand = kHopperVoltage;
+                mPeriodicIO.elevator_demand = kElevatorVoltage;
                 break;
             case REVERSING:
-                mPeriodicIO.hopperDemand = -kHopperVoltage;
-                mPeriodicIO.elevatorDemand = -kElevatorVoltage;
+                mPeriodicIO.hopper_demand = -kHopperVoltage;
+                mPeriodicIO.elevator_demand = -kElevatorVoltage;
                 break;
             case IDLE:
-                mPeriodicIO.hopperDemand = 0;
-                mPeriodicIO.elevatorDemand = 0;
+                mPeriodicIO.hopper_demand = 0;
+                mPeriodicIO.elevator_demand = 0;
                 break;
         }
-    }
-
-    public static class PeriodicIO {
-        // DEMAND
-        public double hopperDemand;
-        public double elevatorDemand;
-    }
-
-    @Override
-    public void outputTelemetry() {
-        SmartDashboard.putString("Hopper State", mState.toString());
-        SmartDashboard.putNumber("Hopper Demand", mPeriodicIO.hopperDemand);
-        SmartDashboard.putNumber("Elevator Demand", mPeriodicIO.elevatorDemand);
-
     }
 
     @Override
@@ -169,5 +151,28 @@ public class Hopper extends Subsystem {
         return false;
     }
 
+    @Override
+    public void outputTelemetry() {
+        SmartDashboard.putString("Hopper State", mState.toString());
+        SmartDashboard.putNumber("Hopper Demand", mPeriodicIO.hopper_demand);
+        SmartDashboard.putNumber("Elevator Demand", mPeriodicIO.elevator_demand);
 
+        SmartDashboard.putNumber("Floor Voltage", mPeriodicIO.floor_voltage);
+        SmartDashboard.putNumber("Floor Current", mPeriodicIO.floor_current);
+        SmartDashboard.putNumber("Elevator Voltage", mPeriodicIO.elevator_voltage);
+        SmartDashboard.putNumber("Elevator Current", mPeriodicIO.elevator_current);
+    }
+
+    public static class PeriodicIO {
+        // INPUTS
+        public double timestamp;
+        public double floor_voltage;
+        public double floor_current;
+        public double elevator_voltage;
+        public double elevator_current;
+
+        // OUTPUTS
+        public double hopper_demand;
+        public double elevator_demand;
+    }
 }

@@ -10,6 +10,7 @@ import com.team1678.frc2021.subsystems.Hood;
 import com.team1678.frc2021.subsystems.Hopper;
 import com.team1678.frc2021.subsystems.Intake;
 import com.team1678.frc2021.subsystems.Shooter;
+import com.team1678.frc2021.subsystems.Superstructure;
 import com.team1678.frc2021.subsystems.Turret;
 
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -33,12 +34,12 @@ public class Robot extends TimedRobot {
   private final ControlBoard mControlBoard = ControlBoard.getInstance();
 
   private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
-  // private final Superstructure mSuperstructure = Superstructure.getInstance();
-  // private final Hood mHood = Hood.getInstance();
+  private final Superstructure mSuperstructure = Superstructure.getInstance();
+  private final Hood mHood = Hood.getInstance();
   private final Hopper mHopper = Hopper.getInstance();
   private final Intake mIntake = Intake.getInstance();
-  // private final Shooter mShooter = Shooter.getInstance();
-  // private final Turret mTurret = Turret.getInstance();
+  private final Shooter mShooter = Shooter.getInstance();
+  private final Turret mTurret = Turret.getInstance();
 
     // loopers
     private final Looper mEnabledLooper = new Looper();
@@ -61,10 +62,13 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     mSubsystemManager.setSubsystems(
+       mSuperstructure,
        mHopper,
-       mIntake
-       // mShooter,
-       // mTurret
+       mIntake,
+       mTurret,
+       mHood,
+       mShooter,
+       mTurret
     ); 
 
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
@@ -146,7 +150,7 @@ public class Robot extends TimedRobot {
 
     if (mControlBoard.getIntake()) {
       mIntake.setState(Intake.WantedAction.INTAKE);
-      mHopper.setState(Hopper.WantedAction.ELEVATE);
+      mHopper.setState(Hopper.WantedAction.FEED);
 
     } else if (mControlBoard.getReverseIntake()) {
 

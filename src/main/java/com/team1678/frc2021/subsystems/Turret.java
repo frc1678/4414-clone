@@ -1,36 +1,57 @@
 package com.team1678.frc2021.subsystems;
 
 import com.ctre.phoenix.CANifier;
-import com.ctre.phoenix.Util;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import com.team1678.frc2021.Constants;
+import com.team1678.frc2021.lib.util.Util;
+
 import com.team1678.frc2021.loops.ILooper;
 import com.team1678.frc2021.loops.Loop;
 
+import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-
-import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 public class Turret extends Subsystem {
 
     private static Turret mInstance;
-    private Encoder mturretEncoder;
-    private double mOffset = 0;
-    private boolean mHoming = true;
-    public static final boolean kUseManualHomingRoutine = false;
-    private boolean ismHoming = true;
 
-    private TalonFX mMaster = new TalonFX(Constants.turretMotorId);
-    private DigitalInput mLimitSwitch = new DigitalInput(1);
-    private final Encoder getMturretEncoder = new Encoder(0,1);
+    private final TalonFX mMaster;
+    private final AnalogEncoder mEncoder;
+    private final int kEncoderDistancePerRotation = 0; // 25100;
 
-    private static final SupplyCurrentLimitConfiguration CURR_LIM = new SupplyCurrentLimitConfiguration(true, 40,60,0.01);
+    private PeriodicIO mPeriodicIO = new PeriodicIO();
+    private boolean mRunningManual = false;
+
+    protected enum ControlState {
+        OPEN_LOOP, MOTION_MAGIC, POSITION_PID, MOTION_PROFILING
+    }
+    protected ControlState mControlState = ControlState.OPEN_LOOP;
+
+    private static final SupplyCurrentLimitConfiguration CURR_LIM = new SupplyCurrentLimitConfiguration(true, 40, 100, 0.02);
+
+    private boolean turretWasReset = false;
+
+    private void resetTurretToAbsolute() {
+        // if (hoodWasReset) {
+        //     return;
+        // }
+        double absolute_position = getTurretDegreesToTicks(getTicksToTurretDegrees(mEncoder.getDistance()) - (Constants.kTurretEncoderOffset - Constants.kHoodMinLimit));
+        mMaster.setSelectedSensorPosition(absolute_position);
+        turretWasReset = true;
+        System.out.println("resetting hood!");
+    }
 
     public synchronized static Turret getInstance() {
         if (mInstance == null) {
@@ -39,35 +60,33 @@ public class Turret extends Subsystem {
         return mInstance;
     }
 
-    double Turret() {
-        //there's only one TalonFX, so we can call just call it "Turret"
-        mMaster.set(ControlMode.PercentOutput, 0.62);
-
-        //sets the software limits for the spin of the turret
-        double constrainTicks;
-        double ticks; {
-            double mReverseSoftLimitTicks = (Constants.MinRadAngle / (235.0 * Constants.RotationsPerTick));
-            double mForwardSoftLimitTicks = Constants.MaxRadAngle / (235.0 * Constants.RotationsPerTick);
-            return Util.cap(mReverseSoftLimitTicks, mForwardSoftLimitTicks);
-        }
+    private Turret() {
+        mMaster = new TalonFX(Constants.kTurretID);
         
-    }
+        // flywheel motor configs
+        mMaster.set(ControlMode.PercentOutput, 0);
+        mMaster.setInverted(false); //TODO: check value
+        mMaster.setNeutralMode(NeutralMode.Brake);
+        mMaster.setSensorPhase(false);
+        
+        mMaster.config_kP(0, Constants.kTurretP, Constants.kLongCANTimeoutMs);
+        mMaster.config_kI(0, Constants.kTurretI, Constants.kLongCANTimeoutMs);
+        mMaster.config_kD(0, Constants.kTurretD, Constants.kLongCANTimeoutMs);    
+        mMaster.selectProfileSlot(0, 0);
 
-    public synchronized boolean ismHoming() {
-        return mHoming;
-    }
+        // flywheel master current limit
+        SupplyCurrentLimitConfiguration curr_lim = new SupplyCurrentLimitConfiguration(true, 40, 100, 0.02);
+        mMaster.configSupplyCurrentLimit(curr_lim);
 
-    private void updateHoming() {
-        mHoming =! new Turret() {
-            @Override
-            public synchronized boolean ismHoming() {
-                return super.ismHoming();
-            }
+        // feedback sensor        
+        mMaster.set(ControlMode.PercentOutput, 0);
+        mMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kLongCANTimeoutMs);
+        mMaster.configClosedloopRamp(0.2);
 
-            public boolean checkSystem() {
-                return false;
-            }
-        }.checkSystem();
+        // config encoder
+        mEncoder = new AnalogEncoder(new AnalogInput(Constants.kTurretEncoderID));
+        mEncoder.reset();
+        mEncoder.setDistancePerRotation(kEncoderDistancePerRotation); // ticks per rotation
     }
 
     @Override
@@ -89,47 +108,102 @@ public class Turret extends Subsystem {
         });
     }
 
-    @Override
-    public synchronized void readPeriodicInputs() {
-        if(mHoming) {
-            System.out.println("is calibrated");
-            mturretEncoder.reset();
+    // intermediate methods
+    public double getTicksToTurretDegrees(double ticks) {
+        return ticks / Constants.kTurretGearRatio;
+    }
 
-            //Motor to encoder
+    public double getTurretDegreesToTicks(double degrees) {
+        return degrees * Constants.kTurretGearRatio;
+    }
 
-            mMaster.setSelectedSensorPosition(mturretEncoder.getDistance());
-            mMaster.setSelectedSensorPosition((int) getAngle());
+    public synchronized double getTurretEncoderPosition() {
+        return getTicksToTurretDegrees(mPeriodicIO.encoder_position);
+    }
 
-            mMaster.overrideSoftLimitsEnable(true);
-            System.out.println("Homed!!!");
-            mHoming = false;
-        }else {
-            mturretEncoder.reset();
+    public synchronized double getTurretAngle() {
+        return getTicksToTurretDegrees(mPeriodicIO.motor_position);
+    }
+
+    protected double unitsPerSecondToTicksPer100ms(double units_per_second) {
+        return getTurretDegreesToTicks(units_per_second) / 10.0;
+    }
+    
+    public synchronized void setSetpointMotionMagic(double units, double feedforward_v) {
+        mPeriodicIO.setpoint = getTurretDegreesToTicks(units);
+        mPeriodicIO.feedforward = unitsPerSecondToTicksPer100ms(feedforward_v) * (Constants.kTurretF + Constants.kTurretD / 100.0) / 1023.0;
+        if (mControlState != ControlState.MOTION_MAGIC) {
+            mMaster.selectProfileSlot(0, 0);
+            mControlState = ControlState.MOTION_MAGIC;
         }
     }
 
-    public synchronized double getAngle() {
-        return getPosition();
+    public synchronized void setSetpointMotionMagic(double units) {
+        setSetpointMotionMagic(units, 0.0);
     }
 
-    public synchronized double getPosition(){
-        return mturretEncoder.getRaw();
+    @Override
+    public synchronized void readPeriodicInputs() {
+        mPeriodicIO.timestamp = Timer.getFPGATimestamp();
+
+        mPeriodicIO.encoder_position = mEncoder.getDistance();
+        mPeriodicIO.motor_position = mMaster.getSelectedSensorPosition();
+        mPeriodicIO.hood_angle = getTurretEncoderPosition();
+
+        if (mMaster.getControlMode() == ControlMode.MotionMagic) {
+            mPeriodicIO.active_trajectory_position = (int) mMaster.getActiveTrajectoryPosition();
+
+            final int newVel = (int) mMaster.getActiveTrajectoryVelocity();
+            if (Util.epsilonEquals(newVel, Constants.kTurretCruiseVelocity, Math.max(1, Constants.kTurretDeadband)) || Util
+                    .epsilonEquals(newVel, mPeriodicIO.active_trajectory_velocity, Math.max(1, Constants.kTurretDeadband))) {
+                // Mechanism is ~constant velocity.
+                mPeriodicIO.active_trajectory_acceleration = 0.0;
+            } else {
+                // Mechanism is accelerating.
+                mPeriodicIO.active_trajectory_acceleration = Math
+                        .signum(newVel - mPeriodicIO.active_trajectory_velocity) * Constants.kTurretCruiseAcceleration;
+            }
+            mPeriodicIO.active_trajectory_velocity = newVel;
+        } else {
+            mPeriodicIO.active_trajectory_position = Integer.MIN_VALUE;
+            mPeriodicIO.active_trajectory_velocity = 0;
+            mPeriodicIO.active_trajectory_acceleration = 0.0;
+        }
+        
+        while (!turretWasReset) {
+            resetTurretToAbsolute();
+        }
     }
 
-    private boolean atHomingLocation() {
-        return mHoming;
+    @Override
+    public void writePeriodicOutputs() {
+        if (mControlState == ControlState.MOTION_MAGIC) {
+            mMaster.set(ControlMode.MotionMagic, mPeriodicIO.setpoint, DemandType.ArbitraryFeedForward,
+                    mPeriodicIO.feedforward);
+        } else if (mControlState == ControlState.OPEN_LOOP) {
+            mMaster.set(ControlMode.PercentOutput, mPeriodicIO.setpoint, DemandType.ArbitraryFeedForward, 0.0);
+        } else {
+            mMaster.set(ControlMode.PercentOutput, 0.0, DemandType.ArbitraryFeedForward, 0.0);
+        }
     }
 
     @Override
     public void outputTelemetry() {
-        // TODO Auto-generated method stub
+        SmartDashboard.putNumber("Turret Encoder Position (ticks)", mPeriodicIO.encoder_position);
+        SmartDashboard.putNumber("Turret Encoder Position (degrees)", getTurretEncoderPosition());
+        SmartDashboard.putNumber("Turret Motor Position (ticks)", mPeriodicIO.motor_position);
+        SmartDashboard.putNumber("Turret Motor Position (degrees)", mPeriodicIO.motor_position / Constants.kTurretGearRatio);
+        SmartDashboard.putNumber("Turret Angle", getTurretAngle());
+    }
 
+    public synchronized void setOpenLoop(double demand) {
+        mPeriodicIO.setpoint = demand;
+        mRunningManual = true;
     }
 
     @Override
     public void stop() {
-        // TODO Auto-generated method stub
-
+        setOpenLoop(0);
     }
 
     @Override
@@ -137,4 +211,20 @@ public class Turret extends Subsystem {
         // TODO Auto-generated method stub
         return false;
     }
+
+    public static class PeriodicIO {
+        //INPUTS
+        public double timestamp;
+        public double encoder_position;
+        public double motor_position;
+        public double hood_angle;
+        public int active_trajectory_position; // ticks
+        public int active_trajectory_velocity; // ticks/100ms
+        public double active_trajectory_acceleration; // ticks/100ms/s
+        public double feedforward;
+
+        //OUTPUTS
+        public double setpoint;
+    }
+
 }

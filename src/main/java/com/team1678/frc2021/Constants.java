@@ -14,6 +14,8 @@ import com.team1678.frc2021.RobotContainer;
 import com.team1678.frc2021.lib.util.SwerveModuleConstants;
 
 public final class Constants {
+    public static final int kLongCANTimeoutMs = 100;
+    
     public static final double stickDeadband = 0.1;
 
     // Control Board
@@ -172,36 +174,44 @@ public final class Constants {
     public static final double kServoExtend = 1.0;
     public static final double kServoRetract = 0.0;
 
-    //Hood
-    public static final ServoSubsystem.ServoSubsystemConstants kHoodConstants = new ServoSubsystem.ServoSubsystemConstants();
-    static {
-        kHoodConstants.kHoodServoA = 2;
-        kHoodConstants.kHoodServoB = 3;
-        kHoodConstants.kHoodSpeed = 1;
-
-        kHoodConstants.kHoodRadius = 11.904; // radius of hood
-        kHoodConstants.kAbsoluteEncoderID = 3;
-    }
-
-    public static final double kHoodMinLimit = 15; //TODO: check value
+   // Hood Constants
+   public static final double kHoodMinLimit = 0.5; //TODO: check value
+   public static final double kHoodMaxLimit = 4.5;
 
     //Intake
     public static int masterIntakeMotorId = 7;
 
+
+
     //Shooter
-    public static final int kMasterFlywheelID = 20;
-    public static final int kSlaveFlywheelID = 21;
-    public static final double kShooterP = 0.2;
-    public static final double kShooterI = 0.00004;
-    public static final double kShooterD = 0.0;
-    public static final double kShooterF = 0.05;
+    public static final int kMasterFlywheelID = 2;
+    public static final int kOverheadFlywheelID = 15;
+
+    public static final double kShooterFlywheelP = 0.07;
+    public static final double kShooterFlywheelI = 0.0;
+    public static final double kShooterFlywheelD = 0.0;
+    public static final double kShooterFlywheelF = 0.073;
+
+    public static final double kShooterOverheadP = 0.05;
+    public static final double kShooterOverheadI = 0.0;
+    public static final double kShooterOverheadD = 0.0;
+    public static final double kShooterOverheadF = 0.053;
 
     //Turret
-    public static int turretMotorId = 10;
-    public static int MaxRadAngle = 2;
-    public static int MinRadAngle = 2;
-    public static double RotationsPerTick;
-    public static int kTurretConstants;
+    public static int kTurretID = 10;
+    public static int kTurretEncoderID = 1;
+    public static int kTurretEncoderOffset = 0;
+    public static final boolean kTurretInvertMotor = false;
+	public static final double kTurretGearRatio = (2048.0 * 85.3) / 360.0;
+	public static final double kTurretP = 0.05;
+	public static final double kTurretI = 0.0;
+	public static final double kTurretD = 0.0;
+	public static final double kTurretF = 0.05;
+	public static final double kTurretMinLimit = 15.00; // TODO: Check value with absolute encoder
+	public static final double kTurretMaxLimit = 80.00; // TODO: Check value with absolute encoder
+	public static final double kTurretCruiseVelocity = 10;
+	public static final double kTurretCruiseAcceleration = 10;
+	public static final double kTurretDeadband = 0;
 
     /* Hopper constants */
     public static final int hopperMotorId = 11; // TODO: Update can ID

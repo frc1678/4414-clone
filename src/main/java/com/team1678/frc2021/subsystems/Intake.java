@@ -34,6 +34,9 @@ public class Intake extends Subsystem {
 
     private State mState = State.IDLE;
 
+    public State getState() {
+        return mState;
+    }
 
     @Override
     public void writePeriodicOutputs() {
