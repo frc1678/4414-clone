@@ -210,7 +210,11 @@ public final class Constants {
     public static final double elevatingDemand = 7;
     public static final double hellavatingDemand = 9;
 
-	public static final double kLooperDt = 0;
+    public static final double kLooperDt = 0;
+    
+    // Climber
+    public static final int motorClimberID = 22;
+    public static final int kLongCANTimeouts = 100;
 
     }
 
