@@ -50,7 +50,7 @@ public class TestStraightPath extends SequentialCommandGroup {
                 s_Swerve);
 
         //command to drop intake by rotating turret
-        DropIntakeCommand turret = new DropIntakeCommand (mTurret, mSuperstructure);
+        DroppingIntakeCommand turret = new DroppingIntakeCommand (mTurret, mSuperstructure);
 
         addCommands(
             new InstantCommand(() -> s_Swerve.resetOdometry(exampleTrajectory.getInitialPose())),
