@@ -189,10 +189,10 @@ public final class Constants {
     public static final int kMasterFlywheelID = 20;
     public static final int kOverheadFlywheelID = 21;
 
-    public static final double kShooterFlywheelP = 0.07;
+    public static final double kShooterFlywheelP = 0.1;
     public static final double kShooterFlywheelI = 0.0;
     public static final double kShooterFlywheelD = 0.0;
-    public static final double kShooterFlywheelF = 0.073;
+    public static final double kShooterFlywheelF = 0.05;
 
     public static final double kShooterOverheadP = 0.05;
     public static final double kShooterOverheadI = 0.0;

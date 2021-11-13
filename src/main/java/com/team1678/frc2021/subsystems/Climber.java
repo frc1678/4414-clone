@@ -22,7 +22,6 @@ public class Climber extends Subsystem {
 
     private Climber() {
         mMaster = new TalonFX(Constants.motorClimberID);
-        mMaster.overrideSoftLimitsEnable(false);
         // mMaster.setNeutralMode(NeutralMode.Brake);
     }
 
@@ -49,6 +48,7 @@ public class Climber extends Subsystem {
 
     @Override
     public void writePeriodicOutputs() {
+        mMaster.overrideSoftLimitsEnable(false);
         mMaster.set(ControlMode.PercentOutput, mPeriodicIO.demand / 12.0);
     }
 

@@ -118,6 +118,10 @@ public class GamepadButtonControlBoard {
         mController.getTrigger(CustomXboxController.Side.LEFT) &&  mController.getTrigger(CustomXboxController.Side.RIGHT);
     }
 
+    public boolean getLeaveClimbMode() {
+        return mController.getButton(Button.BACK) && mController.getButton(Button.START);
+    }
+
     public int getClimberJog(){
         int povread = mController.getController().getPOV();
         switch(povread){
@@ -128,6 +132,19 @@ public class GamepadButtonControlBoard {
             default:
                 return 0;
         }
+    }
+
+    public Rotation2d getJogTurret() {
+        double jogX = -mController.getJoystick(CustomXboxController.Side.LEFT, CustomXboxController.Axis.X);
+        double jogY = -mController.getJoystick(CustomXboxController.Side.LEFT, CustomXboxController.Axis.Y);
+        
+        Translation2d mag = new Translation2d(jogX, jogY);
+        Rotation2d turret = mag.direction();
+
+        if (Deadband.inDeadband(mag.norm(), 0.5)) {
+            return null;
+        }
+        return turret;
     }
 
 }

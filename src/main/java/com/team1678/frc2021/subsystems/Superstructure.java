@@ -44,8 +44,8 @@ public class Superstructure extends Subsystem{
 
     /* Setpoint variables */
     private double mHoodSetpoint = 0.0; //TODO: check value
-    private double mTurretSetpoint = -30.0;
-    private double mShooterSetpoint = 0.0;
+    private double mTurretSetpoint = 0.0;
+    private double mShooterSetpoint = 500.0;
     private double mHoodAngleAdjustment = 0.0;
 
     // Status variables for functions
@@ -135,6 +135,8 @@ public class Superstructure extends Subsystem{
 
             if (mWantsVisionAim) {
                 mTurretSetpoint = currentAngle - targetOffset;
+            } else {
+                mTurre
             }
         }
     }

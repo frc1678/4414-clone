@@ -72,20 +72,17 @@ public class Shooter extends Subsystem {
     // /* set open loop demand */
     public synchronized void setOpenLoop(double demand) {
         mPeriodicIO.flywheel_demand = demand;
-        mPeriodicIO.overhead_demand = -demand;
         mRunningManual = true;
     }
 
     public synchronized void setVelocity(double velocity) {
         mPeriodicIO.flywheel_demand = velocity;
-        mPeriodicIO.overhead_demand = -velocity;
         mRunningManual = false;
     }
 
     public synchronized boolean spunUp() {
-        if (Math.abs(mPeriodicIO.flywheel_demand) > 0 && Math.abs(mPeriodicIO.overhead_demand) > 0) {
-            return Util.epsilonEquals(mPeriodicIO.flywheel_demand, mPeriodicIO.flywheel_velocity, kFlywheelTolerance) &&
-                    Util.epsilonEquals(mPeriodicIO.overhead_demand, mPeriodicIO.overhead_velocity, kOverheadTolerance);
+        if (Math.abs(mPeriodicIO.flywheel_demand) > 0) {
+            return Util.epsilonEquals(mPeriodicIO.flywheel_demand, mPeriodicIO.flywheel_velocity, kFlywheelTolerance);
             }
         return false;
     }
@@ -115,6 +112,15 @@ public class Shooter extends Subsystem {
     }
 
     @Override
+    public synchronized void readPeriodicInputs() {        
+        mPeriodicIO.flywheel_velocity = mMaster.getSelectedSensorVelocity() * kFlywheelVelocityConversion;
+        mPeriodicIO.flywheel_voltage = mMaster.getMotorOutputVoltage();
+        mPeriodicIO.flywheel_current = mMaster.getSupplyCurrent();
+        mPeriodicIO.flywheel_temperature = mMaster.getTemperature();
+
+    }
+
+    @Override
     public void writePeriodicOutputs() {
         if (!mRunningManual) {
             mMaster.set(ControlMode.Velocity, mPeriodicIO.flywheel_demand / kFlywheelVelocityConversion);
@@ -130,12 +136,6 @@ public class Shooter extends Subsystem {
         SmartDashboard.putNumber("Flywheel Current", mPeriodicIO.flywheel_current);
         SmartDashboard.putNumber("Flywheel Goal", mPeriodicIO.flywheel_demand);
         SmartDashboard.putNumber("Flywheel Temperature", mPeriodicIO.flywheel_temperature);
-
-        SmartDashboard.putNumber("Overhead Velocity", mPeriodicIO.overhead_velocity);
-        SmartDashboard.putNumber("Overhead Voltage", mPeriodicIO.flywheel_voltage);
-        SmartDashboard.putNumber("Overhead Current", mPeriodicIO.overhead_current);
-        SmartDashboard.putNumber("Overhead Goal", mPeriodicIO.overhead_demand);
-        SmartDashboard.putNumber("Overhead Temperature", mPeriodicIO.overhead_temperature);
 
         SmartDashboard.putBoolean("Shooter Spun Up: ", spunUp());
     }
@@ -154,21 +154,13 @@ public class Shooter extends Subsystem {
 
     public static class PeriodicIO {
         //INPUTS
-        public double timestamp;
-        
         public double flywheel_velocity;
         public double flywheel_voltage;
         public double flywheel_current;
         public double flywheel_temperature;
 
-        public double overhead_velocity;
-        public double overhead_voltage;
-        public double overhead_current;
-        public double overhead_temperature;
-
         //OUTPUTS
         public double flywheel_demand;
-        public double overhead_demand;
     }
     
 }

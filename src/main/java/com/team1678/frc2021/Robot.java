@@ -39,16 +39,16 @@ public class Robot extends TimedRobot {
   private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
   private final Superstructure mSuperstructure = Superstructure.getInstance();
   private final Hood mHood = Hood.getInstance();
-  // private final Hopper mHopper = Hopper.getInstance();
+  private final Hopper mHopper = Hopper.getInstance();
   private final Intake mIntake = Intake.getInstance();
-  // private final Shooter mShooter = Shooter.getInstance();
+  private final Shooter mShooter = Shooter.getInstance();
   private final Turret mTurret = Turret.getInstance();
-  // private final Climber mClimber = Climber.getInstance();
+  private final Climber mClimber = Climber.getInstance();
   private final Limelight mLimelight = Limelight.getInstance();
 
-    // loopers
-    private final Looper mEnabledLooper = new Looper();
-    private final Looper mDisabledLooper = new Looper();
+  // loopers
+  private final Looper mEnabledLooper = new Looper();
+  private final Looper mDisabledLooper = new Looper();
 
   private boolean climbMode = false;
     
@@ -70,13 +70,12 @@ public class Robot extends TimedRobot {
 
     mSubsystemManager.setSubsystems(
       mSuperstructure,
-      //  mHopper,
       mIntake,
+      mHopper,
       mTurret,
       mHood,
-      //  mShooter,
-      //  mTurret,
-      //  mClimber,
+      mShooter,
+      mClimber,
       mLimelight
     ); 
 
@@ -167,11 +166,11 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    if (mControlBoard.climbMode()) {
+    if (mControlBoard.getClimbMode()) {
       climbMode = true;
     }
 
-    mHood.updateServoPosition();
+    // mHood.updateServoPosition();
     mHood.setPosition(0.3);
 
     mSuperstructure.setmWantVisionAim(mControlBoard.getVisionAim());
@@ -199,12 +198,14 @@ public class Robot extends TimedRobot {
       Climber.WantedAction climber_action = Climber.WantedAction.NONE;
 
       if (mControlBoard.getClimberJog() == -1){
-        climber_action = (Climber.WantedAction.EXTEND);
-      } else if(mControlBoard.getClimberJog() == 1){
-        climber_action = (Climber.WantedAction.RETRACT);
+          climber_action = (Climber.WantedAction.EXTEND);
+      } else if (mControlBoard.getClimberJog() == 1){
+          climber_action = (Climber.WantedAction.RETRACT);
+      } else if (mControlBoard.getLeaveClimbMode()) {
+          climbMode = false;
       }
 
-      // mClimber.setState(climber_action);
+      mClimber.setState(climber_action);
     }
     
 

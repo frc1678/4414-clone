@@ -80,11 +80,19 @@ public class ControlBoard {
     }
 
     // climber
-    public boolean climbMode() {
+    public boolean getClimbMode() {
         return mButtonControlBoard.climbMode();
+    }
+
+    public boolean getLeaveClimbMode() {
+        return mButtonControlBoard.getLeaveClimbMode(); 
     }
 
     public int getClimberJog() {
         return mButtonControlBoard.getClimberJog();
+    }
+
+    public Rotation2d getJogTurret() {
+        return mButtonControlBoard.getJogTurret();
     }
 }
