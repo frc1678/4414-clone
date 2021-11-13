@@ -136,7 +136,7 @@ public class Superstructure extends Subsystem{
             if (mWantsVisionAim) {
                 mTurretSetpoint = currentAngle - targetOffset;
             } else {
-                mTurre
+                mTurretSetpoint = 0.0;
             }
         }
     }

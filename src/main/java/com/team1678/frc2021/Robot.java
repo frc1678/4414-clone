@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
       mIntake,
       mHopper,
       mTurret,
-      mHood,
+      // mHood,
       mShooter,
       mClimber,
       mLimelight
@@ -171,7 +171,7 @@ public class Robot extends TimedRobot {
     }
 
     // mHood.updateServoPosition();
-    mHood.setPosition(0.3);
+    // mHood.setPosition(0.3);
 
     mSuperstructure.setmWantVisionAim(mControlBoard.getVisionAim());
 

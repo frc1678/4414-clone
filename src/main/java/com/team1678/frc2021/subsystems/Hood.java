@@ -15,8 +15,8 @@ public class Hood extends Subsystem {
 
     private static PeriodicIO mPeriodicIO = new PeriodicIO();
 
-    private LinearServo left_servo;
-    private LinearServo right_servo;
+    private Servo left_servo;
+    private Servo right_servo;
 
     public static synchronized Hood getInstance() {
         if (mInstance == null) {
@@ -27,8 +27,10 @@ public class Hood extends Subsystem {
 
     //Create new Hood subsystem
     private Hood() {
-        left_servo = new LinearServo(Constants.kServoAChannel, 5, 7);
-        right_servo = new LinearServo(Constants.kServoBChannel, 5, 7);
+        left_servo = new Servo(Constants.kServoAChannel);
+        right_servo = new Servo(Constants.kServoBChannel);
+        left_servo.setBounds(2.0, 1.8, 1.5, 1.2, 1.0);
+        right_servo.setBounds(2.0, 1.8, 1.5, 1.2, 1.0);
     }
 
     public synchronized void setPosition(double setpoint) {
@@ -38,19 +40,19 @@ public class Hood extends Subsystem {
     @Override
     public synchronized void readPeriodicInputs() {
         // update current position of hood servos
-        left_servo.updateCurPos();
-        right_servo.updateCurPos();
+        // left_servo.updateCurPos();
+        // right_servo.updateCurPos();
 
         // read position in mm
-        mPeriodicIO.left_position = left_servo.getPosition();
-        mPeriodicIO.right_position = right_servo.getPosition();
+        mPeriodicIO.left_position = left_servo.get();
+        mPeriodicIO.right_position = right_servo.get();
     }
 
     @Override
     public synchronized void writePeriodicOutputs() {
         // set setpoints for left and right servos
-        left_servo.setPosition(mPeriodicIO.setpoint);
-        right_servo.setPosition(mPeriodicIO.setpoint);
+        left_servo.setSpeed(0.8/*mPeriodicIO.setpoint*/);
+        right_servo.setSpeed(0.8/*mPeriodicIO.setpoint*/);
     }
 
     @Override
