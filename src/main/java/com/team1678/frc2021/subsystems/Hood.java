@@ -13,8 +13,10 @@ import edu.wpi.first.wpilibj.AnalogEncoder;
 public class Hood extends Subsystem {
     private static Hood mInstance;
 
-    private LinearServo hoodServoA;
-    private LinearServo hoodServoB;
+    private static PeriodicIO mPeriodicIO = new PeriodicIO();
+
+    private LinearServo left_servo;
+    private LinearServo right_servo;
 
     public static synchronized Hood getInstance() {
         if (mInstance == null) {
@@ -25,43 +27,36 @@ public class Hood extends Subsystem {
 
     //Create new Hood subsystem
     private Hood() {
-        hoodServoA = new LinearServo(0, 5, 7);
-        hoodServoB = new LinearServo(1, 5, 7);
+        left_servo = new LinearServo(Constants.kServoAChannel, 5, 7);
+        right_servo = new LinearServo(Constants.kServoBChannel, 5, 7);
     }
 
-    public void hoodExtend() {
-        hoodServoA.set(7);
-        hoodServoB.set(7);
-    }
-
-    public void setPosition(double position) {
-        hoodServoA.setPosition(position);
-        hoodServoB.setPosition(position);
-    }
-
-    public void hoodStop() {
-        hoodServoA.set(0);
-        hoodServoB.set(0);
-    }
-
-    public synchronized double getAngle() {
-        return hoodServoA.getPosition();
-    }
-
-    public synchronized double getAtGoal() {
-        return getAngle();
-    }
-
-    public synchronized double getTucked() {
-        return getAngle();
+    public synchronized void setPosition(double setpoint) {
+        mPeriodicIO.setpoint = setpoint;
     }
 
     @Override
     public synchronized void readPeriodicInputs() {
+        // update current position of hood servos
+        left_servo.updateCurPos();
+        right_servo.updateCurPos();
+
+        // read position in mm
+        mPeriodicIO.left_position = left_servo.getPosition();
+        mPeriodicIO.right_position = right_servo.getPosition();
+    }
+
+    @Override
+    public synchronized void writePeriodicOutputs() {
+        // set setpoints for left and right servos
+        left_servo.setPosition(mPeriodicIO.setpoint);
+        right_servo.setPosition(mPeriodicIO.setpoint);
     }
 
     @Override
     public void outputTelemetry() {
+        SmartDashboard.putNumber("Left Servo Position", mPeriodicIO.left_position);
+        SmartDashboard.putNumber("Right Servo Position", mPeriodicIO.right_position);
     }
 
     @Override
@@ -74,6 +69,15 @@ public class Hood extends Subsystem {
     public boolean checkSystem() {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    public static class PeriodicIO {
+        //INPUTS
+        public static double left_position;
+        public static double right_position;
+
+        //OUTPUTS
+        public double setpoint;
     }
 
 }

@@ -175,17 +175,17 @@ public final class Constants {
     public static final double kServoRetract = 0.0;
 
    // Hood Constants
+   public static final int kServoAChannel = 8;
+   public static final int kServoBChannel = 9;
    public static final double kHoodMinLimit = 0.5; //TODO: check value
    public static final double kHoodMaxLimit = 4.5;
 
     //Intake
     public static int masterIntakeMotorId = 7;
 
-
-
     //Shooter
-    public static final int kMasterFlywheelID = 2;
-    public static final int kOverheadFlywheelID = 15;
+    public static final int kMasterFlywheelID = 20;
+    public static final int kOverheadFlywheelID = 21;
 
     public static final double kShooterFlywheelP = 0.07;
     public static final double kShooterFlywheelI = 0.0;
@@ -202,15 +202,15 @@ public final class Constants {
     public static int kTurretEncoderID = 1;
     public static int kTurretEncoderOffset = 0;
     public static final boolean kTurretInvertMotor = false;
-	public static final double kTurretGearRatio = (2048.0 * 85.3) / 360.0;
+	public static final double kTurretGearRatio = (2048.0 * 27.84) / 360.0;
 	public static final double kTurretP = 0.05;
 	public static final double kTurretI = 0.0;
 	public static final double kTurretD = 0.0;
 	public static final double kTurretF = 0.05;
-	public static final double kTurretMinLimit = 15.00; // TODO: Check value with absolute encoder
-	public static final double kTurretMaxLimit = 80.00; // TODO: Check value with absolute encoder
-	public static final double kTurretCruiseVelocity = 10;
-	public static final double kTurretCruiseAcceleration = 10;
+	public static final double kTurretMinLimit = -130.0; // TODO: Check value with absolute encoder
+	public static final double kTurretMaxLimit = 100.0; // TODO: Check value with absolute encoder
+	public static final double kTurretCruiseVelocity = 10000;
+	public static final double kTurretCruiseAcceleration = 10000;
 	public static final double kTurretDeadband = 0;
 
     /* Hopper constants */

@@ -15,8 +15,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Shooter extends Subsystem {
     private static Shooter mInstance;
 
-    private final TalonFX mFlywheel;
-    private final TalonFX mOverhead;
+    private final TalonFX mMaster;
+    private final TalonFX mSlave;
 
     private boolean mRunningManual = false;
 
@@ -26,51 +26,34 @@ public class Shooter extends Subsystem {
     private static double kFlywheelTolerance = 200.0;
     private static double kOverheadTolerance = 200.0;
 
-    private PeriodicIO mPeriodicIO;
+    private static PeriodicIO mPeriodicIO = new PeriodicIO();
 
     private Shooter() {
-        mFlywheel = new TalonFX(Constants.kMasterFlywheelID);
-        mOverhead = new TalonFX(Constants.kOverheadFlywheelID);
-
-        mPeriodicIO = new PeriodicIO();
+        mMaster = new TalonFX(Constants.kMasterFlywheelID);
+        mSlave = new TalonFX(Constants.kOverheadFlywheelID);
+        mSlave.follow(mMaster);
 
         // flywheel motor configs
-        mFlywheel.set(ControlMode.PercentOutput, 0);
-        mFlywheel.setInverted(true); //TODO: check value
-        mFlywheel.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
-        mFlywheel.enableVoltageCompensation(true);
+        mMaster.set(ControlMode.PercentOutput, 0);
+        mMaster.setInverted(true); //TODO: check value
+        mMaster.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
+        mMaster.enableVoltageCompensation(true);
         
-        mFlywheel.config_kP(0, Constants.kShooterFlywheelP, Constants.kLongCANTimeoutMs);
-        mFlywheel.config_kI(0, Constants.kShooterFlywheelI, Constants.kLongCANTimeoutMs);
-        mFlywheel.config_kD(0, Constants.kShooterFlywheelD, Constants.kLongCANTimeoutMs);
-        mFlywheel.config_kF(0, Constants.kShooterFlywheelF, Constants.kLongCANTimeoutMs);
-        mFlywheel.config_IntegralZone(0, (int) (200.0 / kFlywheelVelocityConversion));
-        mFlywheel.selectProfileSlot(0, 0);
+        mMaster.config_kP(0, Constants.kShooterFlywheelP, Constants.kLongCANTimeoutMs);
+        mMaster.config_kI(0, Constants.kShooterFlywheelI, Constants.kLongCANTimeoutMs);
+        mMaster.config_kD(0, Constants.kShooterFlywheelD, Constants.kLongCANTimeoutMs);
+        mMaster.config_kF(0, Constants.kShooterFlywheelF, Constants.kLongCANTimeoutMs);
+        mMaster.config_IntegralZone(0, (int) (200.0 / kFlywheelVelocityConversion));
+        mMaster.selectProfileSlot(0, 0);
 
         // flywheel master current limit
         SupplyCurrentLimitConfiguration curr_lim = new SupplyCurrentLimitConfiguration(true, 40, 100, 0.02);
-        mFlywheel.configSupplyCurrentLimit(curr_lim);
+        mMaster.configSupplyCurrentLimit(curr_lim);
 
-        // overhead motor configs
-        mOverhead.set(ControlMode.PercentOutput, 0);
-        mOverhead.setInverted(false); //TODO: check value
-        mOverhead.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
-        mOverhead.enableVoltageCompensation(true);
-        
-        mOverhead.config_kP(0, Constants.kShooterOverheadP, Constants.kLongCANTimeoutMs);
-        mOverhead.config_kI(0, Constants.kShooterOverheadI, Constants.kLongCANTimeoutMs);
-        mOverhead.config_kD(0, Constants.kShooterOverheadD, Constants.kLongCANTimeoutMs);
-        mOverhead.config_kF(0, Constants.kShooterOverheadF, Constants.kLongCANTimeoutMs);
-        mOverhead.config_IntegralZone(0, (int) (200.0 / kFlywheelVelocityConversion));
-        mOverhead.selectProfileSlot(0, 0);
- 
         // feedback sensor        
-        mFlywheel.set(ControlMode.PercentOutput, 0);
-        mFlywheel.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kLongCANTimeoutMs);
-        mFlywheel.configClosedloopRamp(0.2);
-        mOverhead.set(ControlMode.PercentOutput, 0);
-        mOverhead.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kLongCANTimeoutMs);
-        mOverhead.configClosedloopRamp(0.2);
+        mMaster.set(ControlMode.PercentOutput, 0);
+        mMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kLongCANTimeoutMs);
+        mMaster.configClosedloopRamp(0.2);
     }
 
     public synchronized static Shooter mInstance() {
@@ -82,7 +65,7 @@ public class Shooter extends Subsystem {
 
 
     public synchronized double getShooterRPM() {
-        return mFlywheel.getSelectedSensorVelocity();
+        return mMaster.getSelectedSensorVelocity();
     }
 
 
@@ -134,11 +117,9 @@ public class Shooter extends Subsystem {
     @Override
     public void writePeriodicOutputs() {
         if (!mRunningManual) {
-            mFlywheel.set(ControlMode.Velocity, mPeriodicIO.flywheel_demand / kFlywheelVelocityConversion);
-            mOverhead.set(ControlMode.Velocity, mPeriodicIO.overhead_demand / kOverheadVelocityConversion);
+            mMaster.set(ControlMode.Velocity, mPeriodicIO.flywheel_demand / kFlywheelVelocityConversion);
         } else {
-            mFlywheel.set(ControlMode.PercentOutput, 0);
-            mOverhead.set(ControlMode.PercentOutput, 0);
+            mMaster.set(ControlMode.PercentOutput, 0);
         }
     }
 

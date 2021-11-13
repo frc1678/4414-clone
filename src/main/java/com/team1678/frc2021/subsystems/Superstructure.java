@@ -36,7 +36,7 @@ public class Superstructure extends Subsystem{
     /* Required subsystem instances */
     private final Intake mIntake = Intake.getInstance();
     private final Hopper mHopper = Hopper.getInstance();
-    private final Hood mHood = Hood.getInstance();
+    // private final Hood mHood = Hood.getInstance();
     private final Turret mTurret = Turret.getInstance();
     private final Shooter mShooter = Shooter.getInstance();
     // private final Limelight mLimelight = Limelight.getInstance();
@@ -44,12 +44,13 @@ public class Superstructure extends Subsystem{
 
     /* Setpoint variables */
     private double mHoodSetpoint = 0.0; //TODO: check value
-    private double mTurretSetpoint = 0.0;
+    private double mTurretSetpoint = -30.0;
     private double mShooterSetpoint = 0.0;
     private double mHoodAngleAdjustment = 0.0;
 
     // Status variables for functions
     private boolean mIsSpunUp = false;
+    private double formal_turret = 0.0;
     private double formal_shooter = 0.0;
     private double formal_hood = 0.0;
     private Hopper.WantedAction formal_hopper = Hopper.WantedAction.NONE;
@@ -124,7 +125,7 @@ public class Superstructure extends Subsystem{
             double currentAngle = Math.toDegrees(mTurret.getTurretAngle());
             double targetOffset = 0/*mLimelight.getTargetOffset().getAsDouble()*/;
 
-            mTurretSetpoint = currentAngle + targetOffset;
+            // mTurretSetpoint = currentAngle + targetOffset;
         }
     }
 
@@ -134,6 +135,7 @@ public class Superstructure extends Subsystem{
         Hopper.WantedAction real_hopper;
         /* Real hood angle setpoint to be set */
         double real_hood;
+        double real_turret;
         /* Real shooter velocity setpoint to be set */
         double real_shooter;
         // status variable tracker for whether shooter is spun up
@@ -143,18 +145,22 @@ public class Superstructure extends Subsystem{
             real_hopper = Hopper.WantedAction.NONE;
             real_hood = Constants.kHoodMinLimit;
             real_shooter = 0.0;
+            real_turret = 0.0;
         } else if (mWantsPrep) {
             real_hopper = Hopper.WantedAction.NONE;
             real_hood = mHoodSetpoint;
             real_shooter = mShooterSetpoint;
+            real_turret = 0.0;
         } else if (mWantsShoot) {
             real_hood = mHoodSetpoint;
             real_shooter = mShooterSetpoint;
             real_hopper = Hopper.WantedAction.FEED;
+            real_turret = 0.0;
         } else if (mWantsSpit) {
             real_hood = Constants.kHoodMinLimit;
             real_shooter = kSpitVelocity;
             real_hopper = Hopper.WantedAction.FEED;
+            real_turret = 0.0;
         } else {
             real_hopper = Hopper.WantedAction.NONE;
             
@@ -178,6 +184,7 @@ public class Superstructure extends Subsystem{
             */
 
             real_hood = mHoodSetpoint;
+            real_turret = mTurretSetpoint;
 
             real_shooter = 0;
         }
@@ -185,12 +192,12 @@ public class Superstructure extends Subsystem{
         // clamp the hood goal between min and max hard stops for hood angle
         real_hood = Util.clamp(real_hood, Constants.kHoodMinLimit, Constants.kHoodMaxLimit);
         /* FOLLOW HOOD SETPOINT GOAL */
-        mHood.setPosition(real_hood);
+        // mHood.setPosition(real_hood);
 
         // clamp the hood goal between min and max hard stops for hood angle
         real_hood = Util.clamp(real_hood, Constants.kHoodMinLimit, Constants.kHoodMaxLimit);
         /* FOLLOW TURRET SETPOINT GOAL */
-        mTurret.setSetpointMotionMagic(mTurretSetpoint);
+        mTurret.setSetpointMotionMagic(real_turret);
 
         /* FOLLOW HOOD SETPOINT GOAL */
         if (Math.abs(real_shooter) < Util.kEpsilon) {
@@ -212,6 +219,7 @@ public class Superstructure extends Subsystem{
         formal_hood = real_hood;
         formal_shooter = real_shooter;
         formal_hopper = real_hopper;
+        formal_turret = real_turret;
     }
 
     /* GET SHOOTER AND HOOD SETPOINTS FROM SUPERSTRUCTURE CONSTANTS REGRESSION */
@@ -241,6 +249,8 @@ public class Superstructure extends Subsystem{
         // Formal goals for hood, shooter, and Hopper that are followed
         SmartDashboard.putNumber("Hood Goal", formal_hood);
         SmartDashboard.putNumber("Hood Setpoint", mHoodSetpoint);
+        SmartDashboard.putNumber("Turret Goal", formal_turret);
+        SmartDashboard.putNumber("Turret Setpoint", mTurretSetpoint);
         SmartDashboard.putNumber("Shooter Goal", formal_shooter);
         SmartDashboard.putNumber("Shooter Setpoint", mShooterSetpoint);
         SmartDashboard.putString("Hopper Goal", formal_hopper.toString());

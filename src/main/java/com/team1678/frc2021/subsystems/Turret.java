@@ -29,7 +29,7 @@ public class Turret extends Subsystem {
 
     private final TalonFX mMaster;
     private final AnalogEncoder mEncoder;
-    private final int kEncoderDistancePerRotation = 0; // 25100;
+    private final int kEncoderDistancePerRotation = 10000; // 25100;
 
     private PeriodicIO mPeriodicIO = new PeriodicIO();
     private boolean mRunningManual = false;
@@ -48,7 +48,7 @@ public class Turret extends Subsystem {
         //     return;
         // }
         double absolute_position = getTurretDegreesToTicks(getTicksToTurretDegrees(mEncoder.getDistance()) - (Constants.kTurretEncoderOffset - Constants.kHoodMinLimit));
-        mMaster.setSelectedSensorPosition(absolute_position);
+        mMaster.setSelectedSensorPosition(0 /*absolute_position*/);
         turretWasReset = true;
         System.out.println("resetting hood!");
     }
@@ -85,7 +85,6 @@ public class Turret extends Subsystem {
 
         // config encoder
         mEncoder = new AnalogEncoder(new AnalogInput(Constants.kTurretEncoderID));
-        mEncoder.reset();
         mEncoder.setDistancePerRotation(kEncoderDistancePerRotation); // ticks per rotation
     }
 
@@ -194,6 +193,7 @@ public class Turret extends Subsystem {
         SmartDashboard.putNumber("Turret Motor Position (ticks)", mPeriodicIO.motor_position);
         SmartDashboard.putNumber("Turret Motor Position (degrees)", mPeriodicIO.motor_position / Constants.kTurretGearRatio);
         SmartDashboard.putNumber("Turret Angle", getTurretAngle());
+        SmartDashboard.putNumber("Real turret goal", mPeriodicIO.setpoint);
     }
 
     public synchronized void setOpenLoop(double demand) {

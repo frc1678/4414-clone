@@ -29,9 +29,9 @@ public class ControlBoard {
         return mButtonControlBoard.getReverseIntake();
     }
 
-    public boolean getReverseHopper() {
-        return mButtonControlBoard.getReverseHopper();
-    }
+    // public boolean getReverseHopper() {
+    //     return mButtonControlBoard.getReverseHopper();
+    // }
 
     public boolean getTurnOffIntake() {
         return mButtonControlBoard.getTurnOffIntake();
@@ -51,5 +51,13 @@ public class ControlBoard {
 
     public boolean getShoot() {
         return mButtonControlBoard.getShoot();
+    }
+
+    public boolean climbMode() {
+        return mButtonControlBoard.climbMode();
+    }
+
+    public int getClimberJog() {
+        return mButtonControlBoard.getClimberJog();
     }
 }

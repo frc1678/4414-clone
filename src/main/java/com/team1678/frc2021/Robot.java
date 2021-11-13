@@ -4,8 +4,10 @@
 
 package com.team1678.frc2021;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.team1678.frc2021.controlboard.ControlBoard;
 import com.team1678.frc2021.loops.Looper;
+import com.team1678.frc2021.subsystems.Climber;
 import com.team1678.frc2021.subsystems.Hood;
 import com.team1678.frc2021.subsystems.Hopper;
 import com.team1678.frc2021.subsystems.Intake;
@@ -35,15 +37,18 @@ public class Robot extends TimedRobot {
 
   private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
   private final Superstructure mSuperstructure = Superstructure.getInstance();
-  private final Hood mHood = Hood.getInstance();
+  // private final Hood mHood = Hood.getInstance();
   private final Hopper mHopper = Hopper.getInstance();
   private final Intake mIntake = Intake.getInstance();
   private final Shooter mShooter = Shooter.getInstance();
   private final Turret mTurret = Turret.getInstance();
+  private final Climber mClimber = Climber.getInstance();
 
     // loopers
     private final Looper mEnabledLooper = new Looper();
     private final Looper mDisabledLooper = new Looper();
+
+  private boolean climbMode = false;
     
 
   public Robot() {
@@ -66,9 +71,10 @@ public class Robot extends TimedRobot {
        mHopper,
        mIntake,
        mTurret,
-       mHood,
+       // mHood,
        mShooter,
-       mTurret
+       mTurret,
+       mClimber
     ); 
 
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
@@ -95,9 +101,10 @@ public class Robot extends TimedRobot {
     mSubsystemManager.outputToSmartDashboard();
     mEnabledLooper.outputToSmartDashboard();
     
-    CommandScheduler.getInstance().run();
+    // CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Controller Rotation",m_robotContainer.getRotationAxis());
     SmartDashboard.putBoolean("Intake Command", mControlBoard.getIntake());
+    SmartDashboard.putBoolean("Climb Mode", climbMode);
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -142,53 +149,52 @@ public class Robot extends TimedRobot {
     mDisabledLooper.stop();
     mEnabledLooper.start();
 
+    mClimber.setBrakeMode(true);
+
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
 
-    if (mControlBoard.getIntake()) {
-      mIntake.setState(Intake.WantedAction.INTAKE);
-      mHopper.setState(Hopper.WantedAction.FEED);
+    if (mControlBoard.climbMode()) {
+      climbMode = true;
+    }
 
-    } else if (mControlBoard.getReverseIntake()) {
-
-      mIntake.setState(Intake.WantedAction.REVERSE);
-
-   } //else if (mControlBoard.getReverseHopper()) {
-
-    //     mHopper.setState(Hopper.WantedAction.REVERSE);
-
-    // } else if (mControlBoard.getTurnOffIntake()) {
-
-    //     mIntake.setState(Intake.WantedAction.NONE);
-    //     mHopper.setState(Hopper.WantedAction.NONE);
-
-    // } else if (mControlBoard.getTuck()) {
-
-    //     mSuperstructure.setWantTuck(true);
-        
-    // } else if (mControlBoard.getUntuck()) {
-
-    //     mSuperstructure.setWantTuck(false);
-
-    // } else if (mControlBoard.getShoot()) {
-
-    //     mSuperstructure.setWantShoot();
-
-    // } 
-    else {
+    if (!climbMode) {
+      if (mControlBoard.getIntake()) {
+        mIntake.setState(Intake.WantedAction.INTAKE);
+      } else if (mControlBoard.getShoot()) {
+        mIntake.setState(Intake.WantedAction.INTAKE);
+        mHopper.setState(Hopper.WantedAction.FEED);
+        mShooter.setVelocity(10);
+      } else {
+        mIntake.setState(Intake.WantedAction.NONE);
+        mHopper.setState(Hopper.WantedAction.NONE);
+        mShooter.setVelocity(0);
+      }
+    } else {
       mIntake.setState(Intake.WantedAction.NONE);
       mHopper.setState(Hopper.WantedAction.NONE);
+
+      Climber.WantedAction climber_action = Climber.WantedAction.NONE;
+
+      if (mControlBoard.getClimberJog() == -1){
+        climber_action = (Climber.WantedAction.EXTEND);
+      } else if(mControlBoard.getClimberJog() == 1){
+        climber_action = (Climber.WantedAction.RETRACT);
+      }
+
+      mClimber.setState(climber_action);
     }
+    
 
   }
 
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
+    // CommandScheduler.getInstance().cancelAll();
     mDisabledLooper.stop();
     mEnabledLooper.stop();
   }
