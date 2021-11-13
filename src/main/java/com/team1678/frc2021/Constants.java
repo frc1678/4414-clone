@@ -4,14 +4,14 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import com.team1678.frc2021.subsystems.LinearServo;
 import com.team1678.frc2021.subsystems.ServoSubsystem;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Units;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import com.team254.lib.geometry.*;
 
 import com.team1678.frc2021.RobotContainer;
 import com.team1678.frc2021.lib.util.SwerveModuleConstants;
+import com.team1678.frc2021.subsystems.Limelight.LimelightConstants;
 
 public final class Constants {
     public static final int kLongCANTimeoutMs = 100;
@@ -39,10 +39,10 @@ public final class Constants {
         public static final double angleGearRatio = 12.8;
 
         public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
-                new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
-                new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
-                new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
-                new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
+                new edu.wpi.first.wpilibj.geometry.Translation2d(wheelBase / 2.0, trackWidth / 2.0),
+                new edu.wpi.first.wpilibj.geometry.Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
+                new edu.wpi.first.wpilibj.geometry.Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
+                new edu.wpi.first.wpilibj.geometry.Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
 
         /* Swerve Current Limiting */
         public static final int angleContinuousCurrentLimit = 25;
@@ -225,6 +225,27 @@ public final class Constants {
     // Climber
     public static final int motorClimberID = 22;
     public static final int kLongCANTimeouts = 100;
+
+    // limelight
+	 public static final LimelightConstants kLimelightConstants = new LimelightConstants();
+	 static {
+		 kLimelightConstants.kName = "Limelight";
+		 kLimelightConstants.kTableName = "limelight";
+		 kLimelightConstants.kHeight = 24.5; // inches
+		 kLimelightConstants.kHorizontalPlaneToLens = Rotation2d.fromRadians(34.0);
+     }
+     
+     public static final double TARGET_HEIGHT = 98.25;
+     public static final double LIMELIGHT_HEIGHT = 24.1;
+     public static final double kGoalHeight = 90.0;
+	 public static final double kInnerGoalDepth = 29.25;
+	 public static final double kInnerGoalToApex = 16.92;
+     public static final double kInnerTargetRangeAngle = Math.toRadians(10.0); 
+     public static final double kImageCaptureLatency = 11.0 / 1000.0; // seconds
+     public static final double kHorizontalFOV = 59.6; // degrees
+	 public static final double kVerticalFOV = 49.7; // degrees
+	 public static final double kVPW = 2.0 * Math.tan(Math.toRadians(kHorizontalFOV / 2.0));
+	 public static final double kVPH = 2.0 * Math.tan(Math.toRadians(kVerticalFOV / 2.0));
 
     }
 

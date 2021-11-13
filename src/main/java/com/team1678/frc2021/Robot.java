@@ -103,7 +103,7 @@ public class Robot extends TimedRobot {
     
     // CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Controller Rotation",m_robotContainer.getRotationAxis());
-    SmartDashboard.putBoolean("Intake Command", mControlBoard.getIntake());
+    SmartDashboard.putBoolean("Intake Command", mControlBoard.getRunIntake());
     SmartDashboard.putBoolean("Climb Mode", climbMode);
   }
 
@@ -162,16 +162,21 @@ public class Robot extends TimedRobot {
     }
 
     if (!climbMode) {
-      if (mControlBoard.getIntake()) {
-        mIntake.setState(Intake.WantedAction.INTAKE);
+      if (mControlBoard.getTuck()) {
+          mSuperstructure.setWantTuck(true);
+      } else if (mControlBoard.getPreShot()) {
+          mSuperstructure.setWantPrep();
       } else if (mControlBoard.getShoot()) {
-        mIntake.setState(Intake.WantedAction.INTAKE);
-        mHopper.setState(Hopper.WantedAction.FEED);
-        mShooter.setVelocity(10);
+          mIntake.setState(Intake.WantedAction.INTAKE);
+          mSuperstructure.setWantShoot();
+      } else if (mControlBoard.getTestSpit()) {
+          mSuperstructure.setWantTestSpit();
+      } else if (mControlBoard.getRunIntake()) {
+          mIntake.setState(Intake.WantedAction.INTAKE);
+      } else if (mControlBoard.getReverseIntake()) {
+          mIntake.setState(Intake.WantedAction.REVERSE);
       } else {
-        mIntake.setState(Intake.WantedAction.NONE);
-        mHopper.setState(Hopper.WantedAction.NONE);
-        mShooter.setVelocity(0);
+          mIntake.setState(Intake.WantedAction.NONE);
       }
     } else {
       mIntake.setState(Intake.WantedAction.NONE);

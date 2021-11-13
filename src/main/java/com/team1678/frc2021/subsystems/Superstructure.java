@@ -39,7 +39,7 @@ public class Superstructure extends Subsystem{
     // private final Hood mHood = Hood.getInstance();
     private final Turret mTurret = Turret.getInstance();
     private final Shooter mShooter = Shooter.getInstance();
-    // private final Limelight mLimelight = Limelight.getInstance();
+    private final Limelight mLimelight = Limelight.getInstance();
     private final ControlBoard mControlBoard = ControlBoard.getInstance();
 
     /* Setpoint variables */
@@ -87,6 +87,10 @@ public class Superstructure extends Subsystem{
         mWantsSpit = !mWantsSpit;
     }
 
+    public synchronized void setmWantVisionAim(boolean vision_aim) {
+        mWantsVisionAim = vision_aim;
+    }
+
     @Override
     public void registerEnabledLoops(ILooper enabledLooper) {
         enabledLooper.register(new Loop() {
@@ -123,9 +127,9 @@ public class Superstructure extends Subsystem{
 
         if (mWantsVisionAim) {
             double currentAngle = Math.toDegrees(mTurret.getTurretAngle());
-            double targetOffset = 0/*mLimelight.getTargetOffset().getAsDouble()*/;
+            double targetOffset = mLimelight.getTargetOffset().getAsDouble();
 
-            // mTurretSetpoint = currentAngle + targetOffset;
+            mTurretSetpoint = currentAngle + targetOffset;
         }
     }
 
@@ -150,12 +154,12 @@ public class Superstructure extends Subsystem{
             real_hopper = Hopper.WantedAction.NONE;
             real_hood = mHoodSetpoint;
             real_shooter = mShooterSetpoint;
-            real_turret = 0.0;
+            real_turret = mTurretSetpoint;
         } else if (mWantsShoot) {
             real_hood = mHoodSetpoint;
             real_shooter = mShooterSetpoint;
             real_hopper = Hopper.WantedAction.FEED;
-            real_turret = 0.0;
+            real_turret = mTurretSetpoint;
         } else if (mWantsSpit) {
             real_hood = Constants.kHoodMinLimit;
             real_shooter = kSpitVelocity;
