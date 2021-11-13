@@ -12,8 +12,10 @@ import com.team254.lib.geometry.*;
 import com.team1678.frc2021.RobotContainer;
 import com.team1678.frc2021.lib.util.SwerveModuleConstants;
 import com.team1678.frc2021.subsystems.Limelight.LimelightConstants;
+import com.team1678.frc2021.subsystems.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 
 public final class Constants {
+    public static final int kCANTimeoutMs = 10;
     public static final int kLongCANTimeoutMs = 100;
     
     public static final double stickDeadband = 0.1;
@@ -197,21 +199,49 @@ public final class Constants {
     public static final double kShooterOverheadD = 0.0;
     public static final double kShooterOverheadF = 0.053;
 
-    //Turret
-    public static int kTurretID = 10;
-    public static int kTurretEncoderID = 1;
-    public static int kTurretEncoderOffset = 0;
-    public static final boolean kTurretInvertMotor = false;
-	public static final double kTurretGearRatio = (2048.0 * 27.84) / 360.0;
-	public static final double kTurretP = 0.05;
-	public static final double kTurretI = 0.0;
-	public static final double kTurretD = 0.0;
-	public static final double kTurretF = 0.05;
-	public static final double kTurretMinLimit = -130.0; // TODO: Check value with absolute encoder
-	public static final double kTurretMaxLimit = 100.0; // TODO: Check value with absolute encoder
-	public static final double kTurretCruiseVelocity = 10000;
-	public static final double kTurretCruiseAcceleration = 10000;
-	public static final double kTurretDeadband = 0;
+    // turret
+	public static final ServoMotorSubsystemConstants kTurretConstants = new ServoMotorSubsystemConstants();
+	static {
+		kTurretConstants.kName = "Turret";
+
+		kTurretConstants.kMasterConstants.id = 10;
+		kTurretConstants.kMasterConstants.invert_motor = false;
+		kTurretConstants.kMasterConstants.invert_sensor_phase = false;
+
+		// Unit == Degrees
+		kTurretConstants.kHomePosition = 0.0; // CCW degrees from forward
+		kTurretConstants.kTicksPerUnitDistance = (2048.0 * 27.84) / 360.0;
+		kTurretConstants.kKp = 0.03; // 0.5
+		kTurretConstants.kKi = 0;
+		kTurretConstants.kKd = 12.0;
+		kTurretConstants.kKf = 0.10;
+		kTurretConstants.kKa = 0.0;
+		kTurretConstants.kMaxIntegralAccumulator = 0;
+		kTurretConstants.kIZone = 0; // Ticks
+		kTurretConstants.kDeadband = 0; // Ticks
+
+		kTurretConstants.kPositionKp = 0.1;
+		kTurretConstants.kPositionKi = 0.0;
+		kTurretConstants.kPositionKd = 10.0;
+		kTurretConstants.kPositionKf = 0.0;
+		kTurretConstants.kPositionMaxIntegralAccumulator = 0;
+		kTurretConstants.kPositionIZone = 0; // Ticks
+		kTurretConstants.kPositionDeadband = 0; // Ticks
+
+		kTurretConstants.kMinUnitsLimit = -130.0;
+		kTurretConstants.kMaxUnitsLimit = 100.0;
+
+		kTurretConstants.kCruiseVelocity = 5000; // Ticks / 100ms
+		kTurretConstants.kAcceleration = 7000; // Ticks / 100ms / s
+		kTurretConstants.kRampRate = 0.0; // s
+		kTurretConstants.kContinuousCurrentLimit = 20; // amps
+		kTurretConstants.kPeakCurrentLimit = 40; // amps
+		kTurretConstants.kPeakCurrentDuration = 10; // milliseconds
+		kTurretConstants.kMaxVoltage = 12.0;
+
+		// kTurretConstants.kStatusFrame8UpdateRate = 50;
+		// kTurretConstants.kRecoverPositionOnReset = true;
+	}
 
     /* Hopper constants */
     public static final int hopperMotorId = 11; // TODO: Update can ID
@@ -245,7 +275,9 @@ public final class Constants {
      public static final double kHorizontalFOV = 59.6; // degrees
 	 public static final double kVerticalFOV = 49.7; // degrees
 	 public static final double kVPW = 2.0 * Math.tan(Math.toRadians(kHorizontalFOV / 2.0));
-	 public static final double kVPH = 2.0 * Math.tan(Math.toRadians(kVerticalFOV / 2.0));
+     public static final double kVPH = 2.0 * Math.tan(Math.toRadians(kVerticalFOV / 2.0));
+     
+     public static final int kPortPipeline = 0;
 
     }
 

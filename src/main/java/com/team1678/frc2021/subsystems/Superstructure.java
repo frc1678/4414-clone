@@ -50,6 +50,8 @@ public class Superstructure extends Subsystem{
 
     // Status variables for functions
     private boolean mIsSpunUp = false;
+    private double current_turret = 0.0;
+    private double target_offset = 0.0;
     private double formal_turret = 0.0;
     private double formal_shooter = 0.0;
     private double formal_hood = 0.0;
@@ -102,6 +104,7 @@ public class Superstructure extends Subsystem{
             @Override
             public void onLoop(double timestamp) {
                 synchronized (Superstructure.this) {
+                    maybeUpdateGoalFromVision(timestamp);
                     setSetpoints();
                 }
             }
@@ -115,21 +118,24 @@ public class Superstructure extends Subsystem{
 
     /* UPDATE SHOOTER AND HOOD GOAL WHEN VISION AIMING */
     public synchronized void maybeUpdateGoalFromVision(double timestamp) {
-        /*
+        
         if (mLimelight.seesTarget()) {
+            /*
             OptionalDouble distance_to_target = mLimelight.getTargetDistance();
             if (distance_to_target.isPresent()) {
                 mHoodSetpoint = getHoodSetpointFromRegression(distance_to_target.getAsDouble()) + mHoodAngleAdjustment;
                 mShooterSetpoint = getShooterSetpointFromRegression(distance_to_target.getAsDouble());
             }
-        }
-        */
+            */
 
-        if (mWantsVisionAim) {
-            double currentAngle = Math.toDegrees(mTurret.getTurretAngle());
+            double currentAngle = mTurret.getAngle();
             double targetOffset = mLimelight.getTargetOffset().getAsDouble();
+            current_turret = currentAngle;
+            target_offset = targetOffset;
 
-            mTurretSetpoint = currentAngle + targetOffset;
+            if (mWantsVisionAim) {
+                mTurretSetpoint = currentAngle - targetOffset;
+            }
         }
     }
 
@@ -197,9 +203,7 @@ public class Superstructure extends Subsystem{
         real_hood = Util.clamp(real_hood, Constants.kHoodMinLimit, Constants.kHoodMaxLimit);
         /* FOLLOW HOOD SETPOINT GOAL */
         // mHood.setPosition(real_hood);
-
-        // clamp the hood goal between min and max hard stops for hood angle
-        real_hood = Util.clamp(real_hood, Constants.kHoodMinLimit, Constants.kHoodMaxLimit);
+        
         /* FOLLOW TURRET SETPOINT GOAL */
         mTurret.setSetpointMotionMagic(real_turret);
 
@@ -261,12 +265,16 @@ public class Superstructure extends Subsystem{
 
         // Other status tracker variables
         SmartDashboard.putBoolean("Is Spun Up", mIsSpunUp);
+        SmartDashboard.putNumber("Current Turret Angle", current_turret);
+        SmartDashboard.putNumber("Target Offset", target_offset);
         
         // Formal superstructure function values
         SmartDashboard.putBoolean("Wants Tuck", mWantsTuck);
         SmartDashboard.putBoolean("Wants Prep", mWantsPrep);
         SmartDashboard.putBoolean("Wants Shoot", mWantsShoot);
         SmartDashboard.putBoolean("Wants Spit", mWantsSpit);
+        SmartDashboard.putBoolean("Wants Vision Aim", mWantsVisionAim);
+        SmartDashboard.putBoolean("Limelight Sees Target", mLimelight.seesTarget());
     }
 
     @Override

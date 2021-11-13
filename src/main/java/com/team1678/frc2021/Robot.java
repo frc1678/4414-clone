@@ -11,6 +11,7 @@ import com.team1678.frc2021.subsystems.Climber;
 import com.team1678.frc2021.subsystems.Hood;
 import com.team1678.frc2021.subsystems.Hopper;
 import com.team1678.frc2021.subsystems.Intake;
+import com.team1678.frc2021.subsystems.Limelight;
 import com.team1678.frc2021.subsystems.Shooter;
 import com.team1678.frc2021.subsystems.Superstructure;
 import com.team1678.frc2021.subsystems.Turret;
@@ -37,12 +38,13 @@ public class Robot extends TimedRobot {
 
   private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
   private final Superstructure mSuperstructure = Superstructure.getInstance();
-  // private final Hood mHood = Hood.getInstance();
-  private final Hopper mHopper = Hopper.getInstance();
+  private final Hood mHood = Hood.getInstance();
+  // private final Hopper mHopper = Hopper.getInstance();
   private final Intake mIntake = Intake.getInstance();
-  private final Shooter mShooter = Shooter.getInstance();
+  // private final Shooter mShooter = Shooter.getInstance();
   private final Turret mTurret = Turret.getInstance();
-  private final Climber mClimber = Climber.getInstance();
+  // private final Climber mClimber = Climber.getInstance();
+  private final Limelight mLimelight = Limelight.getInstance();
 
     // loopers
     private final Looper mEnabledLooper = new Looper();
@@ -67,14 +69,15 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     mSubsystemManager.setSubsystems(
-       mSuperstructure,
-       mHopper,
-       mIntake,
-       mTurret,
-       // mHood,
-       mShooter,
-       mTurret,
-       mClimber
+      mSuperstructure,
+      //  mHopper,
+      mIntake,
+      mTurret,
+      mHood,
+      //  mShooter,
+      //  mTurret,
+      //  mClimber,
+      mLimelight
     ); 
 
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
@@ -112,10 +115,13 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     mEnabledLooper.stop();
     mDisabledLooper.start();
+    mLimelight.setLed(Limelight.LedMode.ON);
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    mLimelight.setLed(Limelight.LedMode.OFF);
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -149,7 +155,11 @@ public class Robot extends TimedRobot {
     mDisabledLooper.stop();
     mEnabledLooper.start();
 
-    mClimber.setBrakeMode(true);
+    mLimelight.setLed(Limelight.LedMode.ON);
+    mLimelight.setPipeline(Constants.kPortPipeline);
+            
+
+    //mClimber.setBrakeMode(true);
 
   }
 
@@ -160,6 +170,11 @@ public class Robot extends TimedRobot {
     if (mControlBoard.climbMode()) {
       climbMode = true;
     }
+
+    mHood.updateServoPosition();
+    mHood.setPosition(0.3);
+
+    mSuperstructure.setmWantVisionAim(mControlBoard.getVisionAim());
 
     if (!climbMode) {
       if (mControlBoard.getTuck()) {
@@ -180,7 +195,6 @@ public class Robot extends TimedRobot {
       }
     } else {
       mIntake.setState(Intake.WantedAction.NONE);
-      mHopper.setState(Hopper.WantedAction.NONE);
 
       Climber.WantedAction climber_action = Climber.WantedAction.NONE;
 
@@ -190,7 +204,7 @@ public class Robot extends TimedRobot {
         climber_action = (Climber.WantedAction.RETRACT);
       }
 
-      mClimber.setState(climber_action);
+      // mClimber.setState(climber_action);
     }
     
 
