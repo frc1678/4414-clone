@@ -16,7 +16,7 @@ public class Shooter extends Subsystem {
     private static Shooter mInstance;
 
     private final TalonFX mMaster;
-    private final TalonFX mSlave;
+    private TalonFX mSlave;
 
     private boolean mRunningManual = false;
 

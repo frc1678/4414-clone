@@ -138,7 +138,7 @@ public class Hopper extends Subsystem {
                 break;
         }
     }
-
+      
     @Override
     public void stop() {
         // TODO Auto-generated method stub
@@ -149,7 +149,6 @@ public class Hopper extends Subsystem {
     public boolean checkSystem() {
         // TODO Auto-generated method stub
         return false;
-    }
 
     @Override
     public void outputTelemetry() {
