@@ -59,7 +59,7 @@ public final class Constants {
         public static final boolean driveEnableCurrentLimit = true;
 
         /* Angle Motor PID Values */
-        public static final double angleKP = 0.05;
+        public static final double angleKP = 0.20;
         public static final double angleKI = 0.0;
         public static final double angleKD = 0.0;
         public static final double angleKF = 0.0;
@@ -218,7 +218,7 @@ public final class Constants {
 		// Unit == Degrees
 		kTurretConstants.kHomePosition = 0.0; // CCW degrees from forward
 		kTurretConstants.kTicksPerUnitDistance = (2048.0 * 27.84) / 360.0;
-		kTurretConstants.kKp = 0.03; // 0.5
+		kTurretConstants.kKp = 0.07; // 0.5
 		kTurretConstants.kKi = 0;
 		kTurretConstants.kKd = 12.0;
 		kTurretConstants.kKf = 0.10;
