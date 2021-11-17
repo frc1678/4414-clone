@@ -14,6 +14,7 @@ import com.team1678.frc2021.subsystems.Intake;
 import com.team1678.frc2021.subsystems.Limelight;
 import com.team1678.frc2021.subsystems.Shooter;
 import com.team1678.frc2021.subsystems.Superstructure;
+import com.team1678.frc2021.subsystems.Swerve;
 import com.team1678.frc2021.subsystems.Turret;
 
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -45,6 +46,8 @@ public class Robot extends TimedRobot {
   private final Turret mTurret = Turret.getInstance();
   private final Climber mClimber = Climber.getInstance();
   private final Limelight mLimelight = Limelight.getInstance();
+
+  // private final Swerve mSwerve = Swerve.getInstance();
 
   // loopers
   private final Looper mEnabledLooper = new Looper();
@@ -120,6 +123,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     mLimelight.setLed(Limelight.LedMode.OFF);
+    m_robotContainer.resetAngleToAbsolute();
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
@@ -131,6 +135,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    mLimelight.setLed(Limelight.LedMode.ON);
+    mLimelight.setPipeline(Constants.kPortPipeline);
 
     mDisabledLooper.stop();
     mEnabledLooper.start();
@@ -158,7 +165,7 @@ public class Robot extends TimedRobot {
     mLimelight.setPipeline(Constants.kPortPipeline);
             
 
-    //mClimber.setBrakeMode(true);
+    mClimber.setBrakeMode(true);
 
   }
 

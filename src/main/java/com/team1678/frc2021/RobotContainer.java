@@ -85,4 +85,12 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     return autonomousSelector.getCommand(s_Swerve);
   }
+
+  public void zeroGyro() {
+    s_Swerve.zeroGyro();
+  }
+
+  public void resetAngleToAbsolute() {
+    s_Swerve.resetAngleToAbsolute();
+  }
 }
