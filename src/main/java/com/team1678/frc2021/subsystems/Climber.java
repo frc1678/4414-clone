@@ -22,7 +22,7 @@ public class Climber extends Subsystem {
 
     private Climber() {
         mMaster = new TalonFX(Constants.motorClimberID);
-        // mMaster.setNeutralMode(NeutralMode.Brake);
+        mMaster.setNeutralMode(NeutralMode.Brake);
     }
 
 
