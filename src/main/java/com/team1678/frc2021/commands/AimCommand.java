@@ -17,13 +17,23 @@ public class AimCommand extends CommandBase{
         mTurretSetpoint = turretSetpoint;
     }
 
+
+    @Override
+    public void initialize() {
+        mSuperstructure.setmWantVisionAim(true);
+        mSuperstructure.setWantTurretHint(true, 90.0);
+    }
+
     @Override
     public void execute() {
-        mTurret.setSetpointMotionMagic(mTurretSetpoint);
         mSuperstructure.setmWantVisionAim(true);
     }
 
-    //mTurret.setMotionMagic
+    
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 
 
     
