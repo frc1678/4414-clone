@@ -45,7 +45,8 @@ public class Superstructure extends Subsystem{
     /* Setpoint variables */
     private double mHoodSetpoint = 0.0; //TODO: check value
     private double mTurretSetpoint = 0.0;
-    private double mShooterSetpoint = 500.0;
+    private double mTurretHint = 0.0;
+    private double mShooterSetpoint = 1000.0;
     private double mHoodAngleAdjustment = 0.0;
 
     // Status variables for functions
@@ -66,6 +67,7 @@ public class Superstructure extends Subsystem{
     private boolean mWantsShoot = false;
     private boolean mWantsSpit = false;
     private boolean mWantsVisionAim = false;
+    private boolean mWantsTurretHint = false;
     private boolean mResetHoodAngleAdjustment = false;
 
     // Function setters
@@ -85,12 +87,25 @@ public class Superstructure extends Subsystem{
         mWantsShoot = !mWantsShoot;
     }
 
+    public synchronized void setWantShoot(boolean shoot) {
+        mWantsShoot = shoot;
+    }
+
     public synchronized void setWantTestSpit() {
         mWantsSpit = !mWantsSpit;
     }
 
     public synchronized void setmWantVisionAim(boolean vision_aim) {
         mWantsVisionAim = vision_aim;
+    }
+
+    public synchronized void setWantTurretHint(boolean wants_hint, double hint) {
+        mWantsTurretHint = wants_hint;
+        mTurretHint = hint;
+    }
+
+    public boolean getWantsVisionAim() {
+        return mWantsVisionAim;
     }
 
     @Override
@@ -118,6 +133,10 @@ public class Superstructure extends Subsystem{
 
     /* UPDATE SHOOTER AND HOOD GOAL WHEN VISION AIMING */
     public synchronized void maybeUpdateGoalFromVision(double timestamp) {
+        if (mWantsTurretHint) {
+            mTurretSetpoint = mTurretHint;
+            mWantsTurretHint = false;
+        } 
         
         if (mLimelight.seesTarget()) {
             /*
