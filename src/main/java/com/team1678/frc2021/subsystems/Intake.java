@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Intake extends Subsystem {
 
-    private static double kIntakingVoltage = -7.0;
+    private static double kIntakingVoltage = -4.0;
     private static double kReversingVoltage = 7.0;
     private static double kIdleVoltage = 0.0;
     private TalonFX mMaster;
