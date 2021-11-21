@@ -1,6 +1,4 @@
-package com.team1678.frc2021.lib.util;
-
-import com.team254.lib.util.InterpolatingTreeMap;
+package com.team254.lib.util;
 
 /**
  * InverseInterpolable is an interface used by an Interpolating Tree as the Key type. Given two endpoint keys and a

@@ -1,4 +1,4 @@
-package com.team1678.frc2021.lib.util;
+package com.team254.lib.util;
 
 /**
  * A Double that can be interpolated using the InterpolatingTreeMap.

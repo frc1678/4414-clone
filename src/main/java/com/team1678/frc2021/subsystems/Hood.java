@@ -10,69 +10,76 @@ import com.team1678.frc2021.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 
-public class Hood extends LinearServo {
+public class Hood extends Subsystem {
     private static Hood mInstance;
-    private Encoder mEncoder;
-    private boolean mHoming = true;
-    private Servo hoodServoA;
-    private Servo hoodServoB;
+
+    private static PeriodicIO mPeriodicIO = new PeriodicIO();
+
+    private Servo left_servo;
+    private Servo right_servo;
+
+    public static synchronized Hood getInstance() {
+        if (mInstance == null) {
+            mInstance = new Hood();
+        }
+        return mInstance;
+    }
 
     //Create new Hood subsystem
-    private Hood(final ServoSubsystem.ServoSubsystemConstants constants) {
-        super(mInstance.getChannel(), mInstance.hashCode(), mInstance.getRaw());
-        hoodServoA = new Servo(Constants.kHoodConstants.kHoodServoA);
-        hoodServoB = new Servo(Constants.kHoodConstants.kHoodServoB);
-        Encoder encoder = new Encoder(0,1);
+    private Hood() {
+        left_servo = new Servo(Constants.kServoAChannel);
+        right_servo = new Servo(Constants.kServoBChannel);
+        left_servo.setBounds(2.0, 1.8, 1.5, 1.2, 1.0);
+        right_servo.setBounds(2.0, 1.8, 1.5, 1.2, 1.0);
     }
 
-    public void hoodExtend() {
-        hoodServoA.set(Constants.kHoodConstants.kHoodSpeed);
-        hoodServoB.set(Constants.kHoodConstants.kHoodSpeed);
-    }
-
-    public void hoodStop() {
-        hoodServoA.set(0);
-        hoodServoB.set(0);
-    }
-
-    public synchronized boolean atHomingLocation() {
-        return false;
-    }
-
-    public synchronized boolean isHoming() {
-        return mHoming;
-    }
-
-    public synchronized double getAngle() {
-        return getPosition();
-    }
-
-    public synchronized double getAtGoal() {
-        return getAngle();
-    }
-
-    public synchronized double getTucked() {
-        return getAngle();
+    public synchronized void setPosition(double setpoint) {
+        mPeriodicIO.setpoint = setpoint;
     }
 
     @Override
     public synchronized void readPeriodicInputs() {
-        if (mHoming && atHomingLocation()) {
-            System.out.println("is homing");
-            mEncoder.reset();
-            System.out.println("Homed!!!");
-            mHoming = false;
-        }
-        SmartDashboard.putNumber(("Hood Encoder Readout"), mEncoder.getDistance());
-        super.readPeriodicInputs();
+        // update current position of hood servos
+        // left_servo.updateCurPos();
+        // right_servo.updateCurPos();
+
+        // read position in mm
+        mPeriodicIO.left_position = left_servo.get();
+        mPeriodicIO.right_position = right_servo.get();
+    }
+
+    @Override
+    public synchronized void writePeriodicOutputs() {
+        // set setpoints for left and right servos
+        left_servo.setSpeed(0.8/*mPeriodicIO.setpoint*/);
+        right_servo.setSpeed(0.8/*mPeriodicIO.setpoint*/);
     }
 
     @Override
     public void outputTelemetry() {
-        super.outputTelemetry();
+        SmartDashboard.putNumber("Left Servo Position", mPeriodicIO.left_position);
+        SmartDashboard.putNumber("Right Servo Position", mPeriodicIO.right_position);
+    }
 
-        SmartDashboard.putBoolean("Calibrated", !mHoming);
-        SmartDashboard.putBoolean("Hood at Homing Location", atHomingLocation());
+    @Override
+    public void stop() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean checkSystem() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    public static class PeriodicIO {
+        //INPUTS
+        public static double left_position;
+        public static double right_position;
+
+        //OUTPUTS
+        public double setpoint;
     }
 
 }

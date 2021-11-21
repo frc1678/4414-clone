@@ -23,6 +23,10 @@ public class AutonomousSelector {
 
         autonomousModeChooser = new SendableChooser<>();
         autonomousModeChooser.addOption("Test Straight", AutonomousMode.TEST_STRAIGHT_PATH);
+        autonomousModeChooser.addOption("Center Three Back", AutonomousMode.CENTER_THREE_BACK);
+        autonomousModeChooser.addOption("Center Three Front", AutonomousMode.CENTER_THREE_FRONT);
+        autonomousModeChooser.addOption("Left Six Far", AutonomousMode.LEFT_SIX_FAR);
+        autonomousModeChooser.addOption("Left Six Near", AutonomousMode.LEFT_SIX_NEAR);
         autoTab.add("Mode", autonomousModeChooser);
         
     }
@@ -33,6 +37,14 @@ public class AutonomousSelector {
         switch (mode) {
             case TEST_STRAIGHT_PATH:
                 return new TestStraightPath(s_Swerve);
+            case CENTER_THREE_BACK:
+                return new CenterThreeBack(s_Swerve);
+            case CENTER_THREE_FRONT:
+                return new CenterThreeFront(s_Swerve);
+            case LEFT_SIX_FAR:
+                return new LeftSixFarMode(s_Swerve);
+            case LEFT_SIX_NEAR:
+                return new LeftSixNearMode(s_Swerve);
             default:
                 System.out.println("ERROR: unexpected auto mode: " + mode);
                 break; 
@@ -46,6 +58,10 @@ public class AutonomousSelector {
 
     private enum AutonomousMode {
         TEST_STRAIGHT_PATH,
+        CENTER_THREE_BACK,
+        CENTER_THREE_FRONT,
+        LEFT_SIX_FAR,
+        LEFT_SIX_NEAR
     }
 
 }

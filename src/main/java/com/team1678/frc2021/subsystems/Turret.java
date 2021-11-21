@@ -1,103 +1,99 @@
 package com.team1678.frc2021.subsystems;
 
-import com.ctre.phoenix.CANifier;
-import com.ctre.phoenix.Util;
+import java.util.ArrayList;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+
 import com.team1678.frc2021.Constants;
+import com.team254.lib.drivers.TalonUtil;
+import com.team254.lib.geometry.Rotation2d;
+import com.team254.lib.util.LatchedBoolean;
+
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import javax.annotation.OverridingMethodsMustInvokeSuper;
+import com.team254.lib.drivers.MotorChecker;
+import com.team254.lib.drivers.BaseTalonChecker;
 
-public class Turret implements Subsystem {
+public class Turret extends ServoMotorSubsystem {
     private static Turret mInstance;
-    private Encoder mturretEncoder;
-    private double mOffset = 0;
-    private boolean mHoming = true;
-    public static final boolean kUseManualHomingRoutine = false;
-    private boolean ismHoming = true;
-
-    private TalonFX mMaster = new TalonFX(Constants.turretMotorId);
+    private LatchedBoolean mJustReset = new LatchedBoolean();
     private DigitalInput mLimitSwitch = new DigitalInput(1);
-    private final Encoder getMturretEncoder = new Encoder(0,1);
 
-    private static final SupplyCurrentLimitConfiguration CURR_LIM = new SupplyCurrentLimitConfiguration(true, 40,60,0.01);
+    private static final SupplyCurrentLimitConfiguration CURR_LIM = new SupplyCurrentLimitConfiguration(true, 40, 60, 0.01);
 
     public synchronized static Turret getInstance() {
         if (mInstance == null) {
-            mInstance = new Turret();
+            mInstance = new Turret(Constants.kTurretConstants);
         }
         return mInstance;
     }
 
-    double Turret() {
-        //there's only one TalonFX, so we can call just call it "Turret"
-        mMaster.set(ControlMode.PercentOutput, 0.62);
+    private Turret(final ServoMotorSubsystemConstants constants) {
+        super(constants);
 
-        //sets the software limits for the spin of the turret
-        double constrainTicks;
-        double ticks; {
-            double mReverseSoftLimitTicks = (Constants.MinRadAngle / (235.0 * Constants.RotationsPerTick));
-            double mForwardSoftLimitTicks = Constants.MaxRadAngle / (235.0 * Constants.RotationsPerTick);
-            return Util.cap(mReverseSoftLimitTicks, mForwardSoftLimitTicks);
-        }
-        
+        mMaster.setSelectedSensorPosition(0);
+        mMaster.overrideSoftLimitsEnable(false);
+        mMaster.configSupplyCurrentLimit(CURR_LIM);
     }
 
-    public synchronized boolean ismHoming() {
-        return mHoming;
-    }
-
-    private void updateHoming() {
-        mHoming =! new Turret() {
-            @Override
-            public synchronized boolean ismHoming() {
-                return super.ismHoming();
-            }
-
-            public boolean checkSystem() {
-                return false;
-            }
-        }.checkSystem();
-    }
-
-    public synchronized void autonomousPeriodic() {
-        if(mHoming) {
-            System.out.println("is calibrated");
-            mturretEncoder.reset();
-
-            //Motor to encoder
-
-            mMaster.setSelectedSensorPosition(mturretEncoder.getDistance());
-            mMaster.setSelectedSensorPosition((int) getAngle());
-
-            mMaster.overrideSoftLimitsEnable(true);
-            System.out.println("Homed!!!");
-            mHoming = false;
-        }else {
-            mturretEncoder.reset();
-        }
-    }
-
+    // Syntactic sugar.
     public synchronized double getAngle() {
         return getPosition();
     }
 
-    public synchronized double getPosition(){
-        return mturretEncoder.getRaw();
-    }
-
-    private boolean atHomingLocation() {
-        return mHoming;
+    public synchronized boolean safeToIntake() {
+        Rotation2d angle = Rotation2d.fromDegrees(getAngle());
+        if (angle.getDegrees() < 55 && angle.getDegrees() > -55) {
+            return false;
+        }
+        return true;
     }
 
     @Override
-    public void periodic() {
-        // Runs every tick
+    public synchronized void writePeriodicOutputs() {
+        super.writePeriodicOutputs();
+        // mMaster.set(ControlMode.PercentOutput, 0.3);
     }
+
+    @Override
+    public synchronized void readPeriodicInputs() {
+        super.readPeriodicInputs();
+    }
+
+    @Override
+    public boolean checkSystem() {
+        return BaseTalonChecker.checkMotors(this, new ArrayList<MotorChecker.MotorConfig<BaseTalon>>() {
+            private static final long serialVersionUID = 1636612675181038895L; // TODO find the right number
+
+            {
+                add(new MotorChecker.MotorConfig<>("master", mMaster));
+            }
+        }, new MotorChecker.CheckerConfig() {
+            { // TODO change to legit config
+                mRunOutputPercentage = 0.1;
+                mRunTimeSec = 1.0;
+                mCurrentFloor = 0.1;
+                mRPMFloor = 90;
+                mCurrentEpsilon = 2.0;
+                mRPMEpsilon = 200;
+                mRPMSupplier = mMaster::getSelectedSensorVelocity;
+            }
+        });
+    }
+
+    @Override
+    public void outputTelemetry() {
+        super.outputTelemetry();
+    }
+
+    public void setCoastMode() {
+        mMaster.setNeutralMode(NeutralMode.Coast);
+    }
+    
 }

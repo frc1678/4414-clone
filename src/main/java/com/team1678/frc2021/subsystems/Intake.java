@@ -3,20 +3,25 @@ package com.team1678.frc2021.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.team1678.frc2021.Constants;
+import com.team1678.frc2021.loops.ILooper;
+import com.team1678.frc2021.loops.Loop;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Intake implements Subsystem {
+public class Intake extends Subsystem {
 
-    private static double kIntakingVoltage = 9.0;
-    private static double kReversingVoltage = -9.0;
+    private static double kIntakingVoltage = -4.0;
+    private static double kReversingVoltage = 7.0;
     private static double kIdleVoltage = 0.0;
-    private TalonFX mMaster = new TalonFX(Constants.masterIntakeMotorId);
+    private TalonFX mMaster;
     private static double mCurrent;
 
     private static Intake mInstance;
+
+    private Intake() {
+        mMaster = new TalonFX(Constants.masterIntakeMotorId);
+    }
 
 
     public enum WantedAction {
@@ -29,15 +34,14 @@ public class Intake implements Subsystem {
 
     private State mState = State.IDLE;
 
+    public State getState() {
+        return mState;
+    }
+
+    @Override
     public void writePeriodicOutputs() {
         mMaster.set(ControlMode.PercentOutput, mPeriodicIO.demand / 12.0);
 
-    }
-
-    public void smartDashboard() {
-        runStateMachine();
-        writePeriodicOutputs();
-        smartDashboard();
     }
 
     public synchronized void setOpenLoop(double percentage) {
@@ -52,6 +56,31 @@ public class Intake implements Subsystem {
         return mCurrent;
     }
 
+    @Override
+    public void registerEnabledLoops(ILooper enabledLooper) {
+        enabledLooper.register(new Loop() {
+            @Override
+            public void onStart(double timestamp) {
+                mState = State.IDLE;
+            }
+
+            @Override
+            public void onLoop(double timestamp) {
+                final double start = Timer.getFPGATimestamp();
+                synchronized (Intake.this) {
+                    runStateMachine();
+                }
+                final double end = Timer.getFPGATimestamp();
+                mPeriodicIO.dt = end - start;
+            }
+
+            @Override
+            public void onStop(double timestamp) {
+                mState = State.IDLE;
+                stop();
+            }
+        });
+    }
 
     public void setState(WantedAction wanted_state) {
         switch (wanted_state) {
@@ -71,33 +100,20 @@ public class Intake implements Subsystem {
     public void runStateMachine() {
         switch (mState) {
             case INTAKING:
-                if (mPeriodicIO.intake_out) {
-                    mPeriodicIO.demand = kIntakingVoltage;
-                } else {
-                    mPeriodicIO.demand = 0.0;
-                }
-                mPeriodicIO.deploy = true;
+                mPeriodicIO.demand = kIntakingVoltage;
+                // if (mPeriodicIO.intake_out) {
+                //     mPeriodicIO.demand = kIntakingVoltage;
+                // } else {
+                //     mPeriodicIO.demand = 0.0;
+                // }
+                // mPeriodicIO.deploy = true;
                 break;
             case IDLE:
                 mPeriodicIO.demand = kIdleVoltage;
-                mPeriodicIO.deploy = false;
                 break;
             case REVERSING:
-                if (mPeriodicIO.intake_out) {
-                    mPeriodicIO.demand = kReversingVoltage;
-                } else {
-                    mPeriodicIO.demand = 0.0;
-                }
+                mPeriodicIO.demand = kReversingVoltage;
         }
-    }
-
-    public static class PeriodicIO {
-        //INPUTS
-        public double current;
-        public boolean intake_out;
-        //OUTPUTS
-        public double demand;
-        public boolean deploy;
     }
 
     private static PeriodicIO mPeriodicIO = new PeriodicIO();
@@ -111,25 +127,36 @@ public class Intake implements Subsystem {
     }
 
     @Override
-    public void periodic() {
-        synchronized (Intake.this) {
-            runStateMachine();
-        }
+    public void outputTelemetry() {
+        SmartDashboard.putNumber("Intake Current", mPeriodicIO.current);
+        SmartDashboard.putNumber("Intake Voltage", getVoltage());
+        SmartDashboard.putString("Intake State", mState.toString());
+        SmartDashboard.putBoolean("Solenoid Goal", mPeriodicIO.deploy);
+
     }
 
     @Override
-    public Command getCurrentCommand() {
-        mCurrent = mPeriodicIO.current;
-        return null;
+    public void stop() {
+        mMaster.set(ControlMode.PercentOutput, 0);
+
     }
 
     @Override
-    public void setDefaultCommand(Command defaultCommand) {
-        mState = State.IDLE;
+    public boolean checkSystem() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
-    @Override
-    public Command getDefaultCommand() {
-        return CommandScheduler.getInstance().requiring(this);
+    public static class PeriodicIO {
+        //INPUTS
+        public double current;
+        public boolean intake_out;
+        public double dt;
+
+        //OUTPUTS
+        public double demand;
+        public boolean deploy;
     }
+
+    
 }

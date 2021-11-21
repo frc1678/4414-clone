@@ -4,7 +4,21 @@
 
 package com.team1678.frc2021;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.team1678.frc2021.controlboard.ControlBoard;
+import com.team1678.frc2021.loops.Looper;
+import com.team1678.frc2021.subsystems.Climber;
+import com.team1678.frc2021.subsystems.Hood;
+import com.team1678.frc2021.subsystems.Hopper;
+import com.team1678.frc2021.subsystems.Intake;
+import com.team1678.frc2021.subsystems.Limelight;
+import com.team1678.frc2021.subsystems.Shooter;
+import com.team1678.frc2021.subsystems.Superstructure;
+import com.team1678.frc2021.subsystems.Swerve;
+import com.team1678.frc2021.subsystems.Turret;
+
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -21,6 +35,31 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  private final ControlBoard mControlBoard = ControlBoard.getInstance();
+
+  private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance();
+  private final Superstructure mSuperstructure = Superstructure.getInstance();
+  private final Hood mHood = Hood.getInstance();
+  private final Hopper mHopper = Hopper.getInstance();
+  private final Intake mIntake = Intake.getInstance();
+  private final Shooter mShooter = Shooter.getInstance();
+  private final Turret mTurret = Turret.getInstance();
+  private final Climber mClimber = Climber.getInstance();
+  private final Limelight mLimelight = Limelight.getInstance();
+
+  // private final Swerve mSwerve = Swerve.getInstance();
+
+  // loopers
+  private final Looper mEnabledLooper = new Looper();
+  private final Looper mDisabledLooper = new Looper();
+
+  private boolean climbMode = false;
+    
+
+  public Robot() {
+
+  }
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -31,6 +70,24 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    mSubsystemManager.setSubsystems(
+      mSuperstructure,
+      mIntake,
+      mHopper,
+      mTurret,
+      // mHood,
+      mShooter,
+      mClimber,
+      mLimelight
+    ); 
+
+    mSubsystemManager.registerEnabledLoops(mEnabledLooper);
+    mSubsystemManager.registerDisabledLoops(mDisabledLooper);
+
+    //TODO: figure out how to add hood
+
+
   }
 
   /**
@@ -46,15 +103,28 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
-    CommandScheduler.getInstance().run();
+    mSubsystemManager.outputToSmartDashboard();
+    mEnabledLooper.outputToSmartDashboard();
+    
+    // CommandScheduler.getInstance().run();
+    SmartDashboard.putNumber("Controller Rotation",m_robotContainer.getRotationAxis());
+    SmartDashboard.putBoolean("Intake Command", mControlBoard.getRunIntake());
+    SmartDashboard.putBoolean("Climb Mode", climbMode);
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    mEnabledLooper.stop();
+    mDisabledLooper.start();
+    mLimelight.setLed(Limelight.LedMode.ON);
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    mLimelight.setLed(Limelight.LedMode.OFF);
+    m_robotContainer.resetAngleToAbsolute();
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -65,6 +135,13 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    mLimelight.setLed(Limelight.LedMode.ON);
+    mLimelight.setPipeline(Constants.kPortPipeline);
+
+    mDisabledLooper.stop();
+    mEnabledLooper.start();
+
   }
 
   /** This function is called periodically during autonomous. */
@@ -80,16 +157,73 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    mDisabledLooper.stop();
+    mEnabledLooper.start();
+
+    mLimelight.setLed(Limelight.LedMode.ON);
+    mLimelight.setPipeline(Constants.kPortPipeline);
+            
+
+    mClimber.setBrakeMode(true);
+
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+
+    if (mControlBoard.getClimbMode()) {
+      climbMode = true;
+    }
+
+    // mHood.updateServoPosition();
+    // mHood.setPosition(0.3);
+
+    mSuperstructure.setmWantVisionAim(mControlBoard.getVisionAim());
+
+    if (!climbMode) {
+      if (mControlBoard.getTuck()) {
+          mSuperstructure.setWantTuck(true);
+      } else if (mControlBoard.getPreShot()) {
+          mSuperstructure.setWantPrep();
+      } else if (mControlBoard.getShoot()) {
+          mIntake.setState(Intake.WantedAction.INTAKE);
+          mSuperstructure.setWantShoot();
+      } else if (mControlBoard.getTestSpit()) {
+          mSuperstructure.setWantTestSpit();
+      } else if (mControlBoard.getRunIntake()) {
+          mIntake.setState(Intake.WantedAction.INTAKE);
+      } else if (mControlBoard.getReverseIntake()) {
+          mIntake.setState(Intake.WantedAction.REVERSE);
+      } else {
+          mIntake.setState(Intake.WantedAction.NONE);
+      }
+    } else {
+      mIntake.setState(Intake.WantedAction.NONE);
+
+      Climber.WantedAction climber_action = Climber.WantedAction.NONE;
+
+      if (mControlBoard.getClimberJog() == -1){
+          climber_action = (Climber.WantedAction.EXTEND);
+      } else if (mControlBoard.getClimberJog() == 1){
+          climber_action = (Climber.WantedAction.RETRACT);
+      } else if (mControlBoard.getLeaveClimbMode()) {
+          climbMode = false;
+      }
+
+      mClimber.setState(climber_action);
+    }
+    
+
+  }
 
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
+    // CommandScheduler.getInstance().cancelAll();
+    mDisabledLooper.stop();
+    mEnabledLooper.stop();
   }
 
   /** This function is called periodically during test mode. */

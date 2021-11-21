@@ -4,39 +4,48 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import com.team1678.frc2021.subsystems.LinearServo;
 import com.team1678.frc2021.subsystems.ServoSubsystem;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Units;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import com.team254.lib.geometry.*;
 
 import com.team1678.frc2021.RobotContainer;
 import com.team1678.frc2021.lib.util.SwerveModuleConstants;
+import com.team1678.frc2021.subsystems.Limelight.LimelightConstants;
+import com.team1678.frc2021.subsystems.ServoMotorSubsystem.ServoMotorSubsystemConstants;
 
 public final class Constants {
+    public static final int kCANTimeoutMs = 10;
+    public static final int kLongCANTimeoutMs = 100;
+    
     public static final double stickDeadband = 0.1;
 
+    // Control Board
+	public static final double kJoystickThreshold = 0.2;
+	public static final int kButtonGamepadPort = 1;
+
     public static final class Swerve {
-        public static final int pigeonID = 1;
-        public static final boolean invertGyro = true; // Always ensure Gyro is CCW+ CW-
+        public static final int pigeonID = 23;
+        public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(1.0);
-        public static final double wheelBase = Units.inchesToMeters(1.0);
+        public static final double trackWidth = Units.inchesToMeters(16.0);
+        public static final double wheelBase = Units.inchesToMeters(16.0);
         public static final double wheelDiameter = Units.inchesToMeters(4.0);
         public static final double wheelCircumference = wheelDiameter * Math.PI;
 
         public static final double openLoopRamp = 0.25;
         public static final double closedLoopRamp = 0.0;
 
-        public static final double driveGearRatio = 1.0;
-        public static final double angleGearRatio = 1.0;
+        public static final double driveGearRatio = 6.86;
+        public static final double angleGearRatio = 12.8;
 
         public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
-                new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
-                new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
-                new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
-                new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
+                new edu.wpi.first.wpilibj.geometry.Translation2d(wheelBase / 2.0, trackWidth / 2.0),
+                new edu.wpi.first.wpilibj.geometry.Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
+                new edu.wpi.first.wpilibj.geometry.Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
+                new edu.wpi.first.wpilibj.geometry.Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
 
         /* Swerve Current Limiting */
         public static final int angleContinuousCurrentLimit = 25;
@@ -50,13 +59,13 @@ public final class Constants {
         public static final boolean driveEnableCurrentLimit = true;
 
         /* Angle Motor PID Values */
-        public static final double angleKP = 0.3;
+        public static final double angleKP = 0.20;
         public static final double angleKI = 0.0;
         public static final double angleKD = 0.0;
         public static final double angleKF = 0.0;
 
         /* Drive Motor PID Values */
-        public static final double driveKP = 0.05;
+        public static final double driveKP = 0.5;
         public static final double driveKI = 0.0;
         public static final double driveKD = 0.0;
         public static final double driveKF = 0.0;
@@ -79,45 +88,49 @@ public final class Constants {
         public static final boolean angleMotorInvert = true;
 
         /* Angle Encoder Invert */
-        public static final boolean canCoderInvert = false;
+        public static final boolean canCoderInvert = true;
 
         /* Module Specific Constants */
-        /* Front Left Module - Module 0 */
+
+        /* Front Right Module - Module 0 */
         public static final class Mod0 {
-            public static final int driveMotorID = 1;
-            public static final int angleMotorID = 1;
-            public static final int canCoderID = 1;
-            public static final double angleOffset = 0;
+            public static final int driveMotorID = 4;
+            public static final int angleMotorID = 8;
+            public static final int canCoderID = 18;
+            public static final double angleOffset = 252;
             public static final SwerveModuleConstants constants =
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
 
-        /* Front Right Module - Module 1 */
+        /* Front Left Module - Module 1 */
         public static final class Mod1 {
-            public static final int driveMotorID = 1;
-            public static final int angleMotorID = 1;
-            public static final int canCoderID = 1;
-            public static final double angleOffset = 0;
+            public static final int driveMotorID = 13;
+            public static final int angleMotorID = 9;
+            public static final int canCoderID = 17;
+            public static final double angleOffset = 292;
             public static final SwerveModuleConstants constants =
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
 
-        /* Back Left Module - Module 2 */
+
+
+        /* Back Right Module - Module 2 */
         public static final class Mod2 {
-            public static final int driveMotorID = 1;
-            public static final int angleMotorID = 1;
-            public static final int canCoderID = 1;
-            public static final double angleOffset = 0;
+            public static final int driveMotorID = 2;
+            public static final int angleMotorID = 5;
+            public static final int canCoderID = 20;
+            public static final double angleOffset = 251;
             public static final SwerveModuleConstants constants =
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
 
-        /* Back Right Module - Module 3 */
+
+        /* Back Left Module - Module 3 */
         public static final class Mod3 {
-            public static final int driveMotorID = 1;
-            public static final int angleMotorID = 1;
-            public static final int canCoderID = 1;
-            public static final double angleOffset = 0;
+            public static final int driveMotorID = 16;
+            public static final int angleMotorID = 12;
+            public static final int canCoderID = 19;
+            public static final double angleOffset = 2.3;
             public static final SwerveModuleConstants constants =
                     new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -157,6 +170,12 @@ public final class Constants {
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
                 new TrapezoidProfile.Constraints(
                         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+
+        public static final TrajectoryConfig defaultConfig = 
+            new TrajectoryConfig(
+                    Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+                    Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+                .setKinematics(Constants.Swerve.swerveKinematics);
     }
 
     //Servo
@@ -164,41 +183,108 @@ public final class Constants {
     public static final double kServoExtend = 1.0;
     public static final double kServoRetract = 0.0;
 
-    //Hood
-    public static final ServoSubsystem.ServoSubsystemConstants kHoodConstants = new ServoSubsystem.ServoSubsystemConstants();
-    static {
-        kHoodConstants.kHoodServoA = 2;
-        kHoodConstants.kHoodServoB = 3;
-        kHoodConstants.kHoodSpeed = 1;
-
-        kHoodConstants.kHoodRadius = 11.904; // radius of hood
-        kHoodConstants.kAbsoluteEncoderID = 3;
-    }
+   // Hood Constants
+   public static final int kServoAChannel = 8;
+   public static final int kServoBChannel = 9;
+   public static final double kHoodMinLimit = 0.5; //TODO: check value
+   public static final double kHoodMaxLimit = 4.5;
 
     //Intake
-    public static int masterIntakeMotorId = 5;
+    public static int masterIntakeMotorId = 7;
 
     //Shooter
-    public static final int kMasterFlywheelID = 2;
-    public static final int kSlaveFlywheelID = 15;
-    public static final double kShooterP = 0.2;
-    public static final double kShooterI = 0.00004;
-    public static final double kShooterD = 0.0;
-    public static final double kShooterF = 0.05;
+    public static final int kMasterFlywheelID = 20;
+    public static final int kOverheadFlywheelID = 21;
 
-    //Turret
-    public static int turretMotorId = 10;
-    public static int MaxRadAngle = 2;
-    public static int MinRadAngle = 2;
-    public static double RotationsPerTick;
-    public static int kTurretConstants;
+    public static final double kShooterFlywheelP = 0.1;
+    public static final double kShooterFlywheelI = 0.0;
+    public static final double kShooterFlywheelD = 0.0;
+    public static final double kShooterFlywheelF = 0.05;
+
+    public static final double kShooterOverheadP = 0.05;
+    public static final double kShooterOverheadI = 0.0;
+    public static final double kShooterOverheadD = 0.0;
+    public static final double kShooterOverheadF = 0.053;
+
+    // turret
+	public static final ServoMotorSubsystemConstants kTurretConstants = new ServoMotorSubsystemConstants();
+	static {
+		kTurretConstants.kName = "Turret";
+
+		kTurretConstants.kMasterConstants.id = 10;
+		kTurretConstants.kMasterConstants.invert_motor = false;
+		kTurretConstants.kMasterConstants.invert_sensor_phase = false;
+
+		// Unit == Degrees
+		kTurretConstants.kHomePosition = 0.0; // CCW degrees from forward
+		kTurretConstants.kTicksPerUnitDistance = (2048.0 * 27.84) / 360.0;
+		kTurretConstants.kKp = 0.07; // 0.5
+		kTurretConstants.kKi = 0;
+		kTurretConstants.kKd = 12.0;
+		kTurretConstants.kKf = 0.10;
+		kTurretConstants.kKa = 0.0;
+		kTurretConstants.kMaxIntegralAccumulator = 0;
+		kTurretConstants.kIZone = 0; // Ticks
+		kTurretConstants.kDeadband = 0; // Ticks
+
+		kTurretConstants.kPositionKp = 0.1;
+		kTurretConstants.kPositionKi = 0.0;
+		kTurretConstants.kPositionKd = 10.0;
+		kTurretConstants.kPositionKf = 0.0;
+		kTurretConstants.kPositionMaxIntegralAccumulator = 0;
+		kTurretConstants.kPositionIZone = 0; // Ticks
+		kTurretConstants.kPositionDeadband = 0; // Ticks
+
+		kTurretConstants.kMinUnitsLimit = -130.0;
+		kTurretConstants.kMaxUnitsLimit = 100.0;
+
+		kTurretConstants.kCruiseVelocity = 5000; // Ticks / 100ms
+		kTurretConstants.kAcceleration = 7000; // Ticks / 100ms / s
+		kTurretConstants.kRampRate = 0.0; // s
+		kTurretConstants.kContinuousCurrentLimit = 20; // amps
+		kTurretConstants.kPeakCurrentLimit = 40; // amps
+		kTurretConstants.kPeakCurrentDuration = 10; // milliseconds
+		kTurretConstants.kMaxVoltage = 12.0;
+
+		// kTurretConstants.kStatusFrame8UpdateRate = 50;
+		// kTurretConstants.kRecoverPositionOnReset = true;
+	}
 
     /* Hopper constants */
-    public static final int masterElevatorMotorId = 69; // TODO: Update can ID
-    public static final int slaveElevatorMotorId = 70; // TODO: Update can ID
+    public static final int hopperMotorId = 11; // TODO: Update can ID
+    public static final int elevatorMotorId = 1; // TODO: Update can ID
     public static final int elevatorSensorPin = 69; // TODO: Update pin #
     public static final double elevatingDemand = 7;
     public static final double hellavatingDemand = 9;
+
+    public static final double kLooperDt = 0;
+    
+    // Climber
+    public static final int motorClimberID = 22;
+    public static final int kLongCANTimeouts = 100;
+
+    // limelight
+	 public static final LimelightConstants kLimelightConstants = new LimelightConstants();
+	 static {
+		 kLimelightConstants.kName = "Limelight";
+		 kLimelightConstants.kTableName = "limelight";
+		 kLimelightConstants.kHeight = 24.5; // inches
+		 kLimelightConstants.kHorizontalPlaneToLens = Rotation2d.fromRadians(34.0);
+     }
+     
+     public static final double TARGET_HEIGHT = 98.25;
+     public static final double LIMELIGHT_HEIGHT = 24.1;
+     public static final double kGoalHeight = 90.0;
+	 public static final double kInnerGoalDepth = 29.25;
+	 public static final double kInnerGoalToApex = 16.92;
+     public static final double kInnerTargetRangeAngle = Math.toRadians(10.0); 
+     public static final double kImageCaptureLatency = 11.0 / 1000.0; // seconds
+     public static final double kHorizontalFOV = 59.6; // degrees
+	 public static final double kVerticalFOV = 49.7; // degrees
+	 public static final double kVPW = 2.0 * Math.tan(Math.toRadians(kHorizontalFOV / 2.0));
+     public static final double kVPH = 2.0 * Math.tan(Math.toRadians(kVerticalFOV / 2.0));
+     
+     public static final int kPortPipeline = 0;
 
     }
 

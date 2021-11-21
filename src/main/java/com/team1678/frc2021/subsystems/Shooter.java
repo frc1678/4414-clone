@@ -1,60 +1,59 @@
 package com.team1678.frc2021.subsystems;
 
 import com.team1678.frc2021.Constants;
+import com.team1678.frc2021.lib.util.Util;
+import com.team1678.frc2021.loops.ILooper;
+import com.team1678.frc2021.loops.Loop;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj.Timer;
 
-public class Shooter implements Subsystem {
+public class Shooter extends Subsystem {
     private static Shooter mInstance;
 
     private final TalonFX mMaster;
     private TalonFX mSlave;
 
     private boolean mRunningManual = false;
-    private static double kUpperVelocityConversion = 75.0 / 512.0;
-    private static double kMainVelocityConversion = 600.0 / 2048.0;
 
-    private PeriodicIO mPeriodicIO;
+    private static double kFlywheelVelocityConversion = 150.0 / 2048.0;
+    private static double kOverheadVelocityConversion = 150.0 / 2048.0;
 
-    public static class PeriodicIO {
-        //INPUTS
-        public double timestamp;
+    private static double kFlywheelTolerance = 200.0;
+    private static double kOverheadTolerance = 200.0;
 
-        public double main_velocity;
-        public double main_voltage;
-        public double main_current;
-        public double main_temperature;
-
-        //OUTPUTS
-        public double main_demand;
-    }
+    private static PeriodicIO mPeriodicIO = new PeriodicIO();
 
     private Shooter() {
         mMaster = new TalonFX(Constants.kMasterFlywheelID);
+        mSlave = new TalonFX(Constants.kOverheadFlywheelID);
         mSlave.follow(mMaster);
 
-        mPeriodicIO = new PeriodicIO();
-
+        // flywheel motor configs
         mMaster.set(ControlMode.PercentOutput, 0);
-        mMaster.setInverted(true);
-        mMaster.configVoltageCompSaturation(12.0);
+        mMaster.setInverted(true); //TODO: check value
+        mMaster.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
         mMaster.enableVoltageCompensation(true);
-
-        mMaster.config_kP(0, Constants.kShooterP);
-        mMaster.config_kI(0, Constants.kShooterI);
-        mMaster.config_kD(0, Constants.kShooterD);
-        mMaster.config_kF(0, Constants.kShooterF);
-        mMaster.config_IntegralZone(0, (int) (200.0 / kUpperVelocityConversion));
+        
+        mMaster.config_kP(0, Constants.kShooterFlywheelP, Constants.kLongCANTimeoutMs);
+        mMaster.config_kI(0, Constants.kShooterFlywheelI, Constants.kLongCANTimeoutMs);
+        mMaster.config_kD(0, Constants.kShooterFlywheelD, Constants.kLongCANTimeoutMs);
+        mMaster.config_kF(0, Constants.kShooterFlywheelF, Constants.kLongCANTimeoutMs);
+        mMaster.config_IntegralZone(0, (int) (200.0 / kFlywheelVelocityConversion));
         mMaster.selectProfileSlot(0, 0);
 
-        mSlave.setInverted(true);
+        // flywheel master current limit
+        SupplyCurrentLimitConfiguration curr_lim = new SupplyCurrentLimitConfiguration(true, 40, 100, 0.02);
+        mMaster.configSupplyCurrentLimit(curr_lim);
+
+        // feedback sensor        
+        mMaster.set(ControlMode.PercentOutput, 0);
+        mMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, Constants.kLongCANTimeoutMs);
+        mMaster.configClosedloopRamp(0.2);
     }
 
     public synchronized static Shooter mInstance() {
@@ -70,20 +69,22 @@ public class Shooter implements Subsystem {
     }
 
 
-    public synchronized void setOpenLoopOverhead(double main) {
-        mPeriodicIO.main_demand = main;
+    // /* set open loop demand */
+    public synchronized void setOpenLoop(double demand) {
+        mPeriodicIO.flywheel_demand = demand;
         mRunningManual = true;
     }
 
-    public synchronized double getDemandOverhead() {
-        return mPeriodicIO.main_demand;
+    public synchronized void setVelocity(double velocity) {
+        mPeriodicIO.flywheel_demand = velocity;
+        mRunningManual = false;
     }
 
-
-    public synchronized void setVelocity(double velocity) {
-        mPeriodicIO.main_demand = velocity;
-        mRunningManual = false;
-
+    public synchronized boolean spunUp() {
+        if (Math.abs(mPeriodicIO.flywheel_demand) > 0) {
+            return Util.epsilonEquals(mPeriodicIO.flywheel_demand, mPeriodicIO.flywheel_velocity, kFlywheelTolerance);
+            }
+        return false;
     }
 
     public static Shooter getInstance() {
@@ -94,39 +95,72 @@ public class Shooter implements Subsystem {
     }
 
     @Override
-    public void setDefaultCommand(Command defaultCommand) {
-        mPeriodicIO.timestamp = Timer.getFPGATimestamp();
+    public void registerEnabledLoops(ILooper enabledLooper) {
+        enabledLooper.register(new Loop() {
+            @Override
+            public void onStart(double timestamp) {
+            }
 
-        //for main wheel
-        mPeriodicIO.main_velocity = mMaster.getSelectedSensorVelocity() * kMainVelocityConversion;
-        mPeriodicIO.main_voltage = mMaster.getMotorOutputVoltage();
-        mPeriodicIO.main_current = mMaster.getStatorCurrent();
-        mPeriodicIO.main_temperature = mMaster.getTemperature();
+            @Override
+            public void onLoop(double timestamp) {
+            }
+
+            @Override
+            public void onStop(double timestamp) {
+            }
+        });
     }
 
     @Override
-    public Command getDefaultCommand() {
+    public synchronized void readPeriodicInputs() {        
+        mPeriodicIO.flywheel_velocity = mMaster.getSelectedSensorVelocity() * kFlywheelVelocityConversion;
+        mPeriodicIO.flywheel_voltage = mMaster.getMotorOutputVoltage();
+        mPeriodicIO.flywheel_current = mMaster.getSupplyCurrent();
+        mPeriodicIO.flywheel_temperature = mMaster.getTemperature();
+
+    }
+
+    @Override
+    public void writePeriodicOutputs() {
         if (!mRunningManual) {
-            mMaster.set(ControlMode.Velocity, mPeriodicIO.main_demand / kMainVelocityConversion);
+            mMaster.set(ControlMode.Velocity, mPeriodicIO.flywheel_demand / kFlywheelVelocityConversion);
         } else {
             mMaster.set(ControlMode.PercentOutput, 0);
         }
-        return CommandScheduler.getInstance().getDefaultCommand(this);
     }
 
     @Override
-    public void periodic() {
-        synchronized (Shooter.this) {
-            SmartDashboard.putNumber("Main Wheel Velocity", mPeriodicIO.main_velocity);
-            SmartDashboard.putNumber("Main Wheel Current", mPeriodicIO.main_current);
-            SmartDashboard.putNumber("Main Wheel Goal", mPeriodicIO.main_demand);
-            SmartDashboard.putNumber("Main Wheel Temperature", mPeriodicIO.main_temperature);
-        }
+    public void outputTelemetry() {
+        SmartDashboard.putNumber("Flywheel Velocity", mPeriodicIO.flywheel_velocity);
+        SmartDashboard.putNumber("Flywheel Voltage", mPeriodicIO.flywheel_voltage);
+        SmartDashboard.putNumber("Flywheel Current", mPeriodicIO.flywheel_current);
+        SmartDashboard.putNumber("Flywheel Goal", mPeriodicIO.flywheel_demand);
+        SmartDashboard.putNumber("Flywheel Temperature", mPeriodicIO.flywheel_temperature);
+
+        SmartDashboard.putBoolean("Shooter Spun Up: ", spunUp());
     }
 
     @Override
-    public Command getCurrentCommand() {
-        return CommandScheduler.getInstance().requiring(this);
+    public void stop() {
+        // TODO Auto-generated method stub
+
     }
 
+    @Override
+    public boolean checkSystem() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    public static class PeriodicIO {
+        //INPUTS
+        public double flywheel_velocity;
+        public double flywheel_voltage;
+        public double flywheel_current;
+        public double flywheel_temperature;
+
+        //OUTPUTS
+        public double flywheel_demand;
+    }
+    
 }

@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
 public class Swerve extends SubsystemBase {
+    public static Swerve mInstance;
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public PigeonIMU gyro;
@@ -47,14 +48,8 @@ public class Swerve extends SubsystemBase {
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-        if(isSnapping) {
-            if(Math.abs(rotation) == 0.0) {
-                maybeStopSnap(false);
-                rotation = calculateSnapVectors();
-            } else {
-                maybeStopSnap(true);
-            }
-        } 
+
+        SmartDashboard.putNumber("Swerve Point Turn Rotation Number Thing", rotation);
         SwerveModuleState[] swerveModuleStates =
             Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -132,6 +127,12 @@ public class Swerve extends SubsystemBase {
         gyro.setYaw(0);
     }
 
+    public void resetAngleToAbsolute() {
+        for (SwerveModule mod: mSwerveMods) {
+            mod.resetAngleModule();
+        }
+    }
+
     public Rotation2d getYaw() {
         double[] ypr = new double[3];
         gyro.getYawPitchRoll(ypr);
@@ -149,6 +150,13 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getState().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         }
+    }
+
+    public static synchronized Swerve getInstance() {
+        if (mInstance == null) {
+            mInstance = new Swerve();
+        }
+        return mInstance;
     }
 }
     
