@@ -149,6 +149,7 @@ public class Hopper extends Subsystem {
     public boolean checkSystem() {
         // TODO Auto-generated method stub
         return false;
+    }
 
     @Override
     public void outputTelemetry() {
