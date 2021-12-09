@@ -12,16 +12,14 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import com.team1678.frc2021.Constants;
 import com.team1678.frc2021.subsystems.Swerve;
-import com.team1678.frc2021.subsystems.Turret;
 import com.team1678.frc2021.commands.AimCommand;
 import com.team1678.frc2021.commands.IntakeCommand;
 import com.team1678.frc2021.commands.ShootCommand;
 import com.team1678.frc2021.subsystems.Intake;
-import com.team1678.frc2021.subsystems.Limelight;
+
 import com.team1678.frc2021.subsystems.Superstructure;
 
 public class LeftSixFarMode extends SequentialCommandGroup{
@@ -30,7 +28,6 @@ public class LeftSixFarMode extends SequentialCommandGroup{
 
         final Intake mIntake = Intake.getInstance();
         final Superstructure mSuperstructure = Superstructure.getInstance();
-        final Turret mTurret = Turret.getInstance();
 
         var thetaController =
             new ProfiledPIDController(
@@ -105,10 +102,10 @@ public class LeftSixFarMode extends SequentialCommandGroup{
             new ShootCommand(mSuperstructure);
 
         AimCommand firstAim =
-            new AimCommand(mSuperstructure, mTurret, 90);
+            new AimCommand(mSuperstructure, 90);
 
         AimCommand secondAim =
-            new AimCommand(mSuperstructure, mTurret, 90);
+            new AimCommand(mSuperstructure, 90);
 
         addCommands(
             new InstantCommand(() -> s_Swerve.resetOdometry(leftSixFirstShot.getInitialPose())),
