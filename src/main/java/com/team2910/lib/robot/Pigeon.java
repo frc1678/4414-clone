@@ -1,7 +1,7 @@
 package com.team2910.lib.robot;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
-import com.team1678.frc2021.Ports;
+import com.team1678.frc2021.Constants;
 import com.team2910.lib.math.Rotation2;
 
 public class Pigeon extends Gyroscope {
@@ -18,7 +18,7 @@ public class Pigeon extends Gyroscope {
     private static Pigeon instance = null;
     public static Pigeon getInstance(){
 		if(instance == null){
-			instance = new Pigeon(Ports.PIGEON_TALON);
+			instance = new Pigeon(Constants.Swerve.pigeonID);
 		}
 		return instance;
 	}

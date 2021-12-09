@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
       mIntake,
       mHopper,
       mTurret,
-      // mHood,
+      mHood,
       mShooter,
       mClimber,
       mLimelight
@@ -81,8 +81,6 @@ public class Robot extends TimedRobot {
 
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
     mSubsystemManager.registerDisabledLoops(mDisabledLooper);
-
-    //TODO: figure out how to add hood
 
 
   }
@@ -173,9 +171,6 @@ public class Robot extends TimedRobot {
     if (mControlBoard.getClimbMode()) {
       climbMode = true;
     }
-
-    // mHood.updateServoPosition();
-    // mHood.setPosition(0.3);
 
     mSuperstructure.setmWantVisionAim(mControlBoard.getVisionAim());
 
