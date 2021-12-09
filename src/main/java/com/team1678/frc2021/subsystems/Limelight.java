@@ -62,7 +62,6 @@ public class Limelight extends Subsystem {
         Loop mLoop = new Loop() {
             @Override
             public void onStart(double timestamp) {
-              //  RobotState.getInstance().resetVision();
             }
 
             @Override
@@ -255,7 +254,6 @@ public class Limelight extends Subsystem {
 
     public synchronized void setPipeline(int mode) {
         if (mode != mPeriodicIO.pipeline) {
-         //   RobotState.getInstance().resetVision();
             mPeriodicIO.pipeline = mode;
 
             System.out.println(mPeriodicIO.pipeline + ", " + mode);
