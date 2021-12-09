@@ -1,5 +1,6 @@
 package com.team1678.frc2021.subsystems;
 
+import java.util.OptionalDouble;
 
 import com.team1678.frc2021.Constants;
 import com.team1678.frc2021.controlboard.ControlBoard;
@@ -131,13 +132,6 @@ public class Superstructure extends Subsystem{
         } 
         
         if (mLimelight.seesTarget()) {
-            /*
-            OptionalDouble distance_to_target = mLimelight.getTargetDistance();
-            if (distance_to_target.isPresent()) {
-                mHoodSetpoint = getHoodSetpointFromRegression(distance_to_target.getAsDouble()) + mHoodAngleAdjustment;
-                mShooterSetpoint = getShooterSetpointFromRegression(distance_to_target.getAsDouble());
-            }
-            */
 
             double currentAngle = mTurret.getAngle();
             double targetOffset = mLimelight.getTargetOffset().getAsDouble();
@@ -186,36 +180,12 @@ public class Superstructure extends Subsystem{
             real_turret = 0.0;
         } else {
             real_hopper = Hopper.WantedAction.NONE;
-            
-            /* control for adding manual hood adjustment */
-            /*
-            switch(mControlBoard.getManualHoodSet()) {
-                case 1:
-                    mHoodAngleAdjustment += 1;
-                    break;
-                case -1:
-                    mHoodAngleAdjustment += -1;
-                    break;
-                case 0:
-                    mHoodAngleAdjustment += 0;
-                    break;
-            }
-            if (mResetHoodAngleAdjustment) {
-                mHoodAngleAdjustment = 0.0;
-                mResetHoodAngleAdjustment = false;
-            }
-            */
 
             real_hood = mHoodSetpoint;
             real_turret = mTurretSetpoint;
 
             real_shooter = 0;
         }
-
-        // clamp the hood goal between min and max hard stops for hood angle
-        real_hood = Util.clamp(real_hood, Constants.kHoodMinLimit, Constants.kHoodMaxLimit);
-        /* FOLLOW HOOD SETPOINT GOAL */
-        // mHood.setPosition(real_hood);
         
         /* FOLLOW TURRET SETPOINT GOAL */
         mTurret.setSetpointMotionMagic(real_turret);
@@ -241,29 +211,7 @@ public class Superstructure extends Subsystem{
         formal_shooter = real_shooter;
         formal_hopper = real_hopper;
         formal_turret = real_turret;
-    }
-
-    /* GET SHOOTER AND HOOD SETPOINTS FROM SUPERSTRUCTURE CONSTANTS REGRESSION */
-    /*
-    private double getShooterSetpointFromRegression(double range) {
-        if (ShooterRegression.kUseSmartdashboard) {
-            return SmartDashboard.getNumber("Shooting RPM", 0);
-        } else if (ShooterRegression.kUseFlywheelAutoAimPolynomial) {
-            return ShooterRegression.kFlywheelAutoAimPolynomial.predict(range);
-        } else {
-            return ShooterRegression.kFlywheelAutoAimMap.getInterpolated(new InterpolatingDouble(range)).value;
-        }
-    }
-    private double getHoodSetpointFromRegression(double range) {
-        if (ShooterRegression.kUseSmartdashboard) {
-            return SmartDashboard.getNumber("Hood Angle", 0);
-        } else if (ShooterRegression.kUseHoodAutoAimPolynomial) {
-            return ShooterRegression.kHoodAutoAimPolynomial.predict(range);
-        } else {
-            return ShooterRegression.kHoodAutoAimMap.getInterpolated(new InterpolatingDouble(range)).value;
-        }
-    }
-    */
+    }   
 
     @Override
     public void outputTelemetry() {
