@@ -1,14 +1,11 @@
 
 package com.team1678.frc2021.subsystems;
 
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Servo;
 
 import com.team1678.frc2021.Constants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.AnalogEncoder;
 
 public class Hood extends Subsystem {
     private static Hood mInstance;

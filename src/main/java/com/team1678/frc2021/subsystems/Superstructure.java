@@ -1,19 +1,11 @@
 package com.team1678.frc2021.subsystems;
 
-import java.util.OptionalDouble;
 
 import com.team1678.frc2021.Constants;
 import com.team1678.frc2021.controlboard.ControlBoard;
 import com.team254.lib.util.Util;
 import com.team1678.frc2021.loops.ILooper;
 import com.team1678.frc2021.loops.Loop;
-import com.team1678.frc2021.subsystems.Hood;
-import com.team1678.frc2021.subsystems.Hopper;
-import com.team1678.frc2021.subsystems.Intake;
-import com.team1678.frc2021.subsystems.Shooter;
-import com.team1678.frc2021.subsystems.Subsystem;
-import com.team1678.frc2021.subsystems.Turret;
-import com.team1678.frc2021.subsystems.Hopper.WantedAction;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 

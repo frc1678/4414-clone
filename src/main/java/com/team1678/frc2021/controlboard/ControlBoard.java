@@ -1,14 +1,10 @@
 package com.team1678.frc2021.controlboard;
 
-import com.team1678.frc2021.Constants;
-import com.team1678.frc2021.controlboard.GamepadButtonControlBoard;
 import com.team254.lib.geometry.Rotation2d;
-import com.team1678.frc2021.controlboard.CustomXboxController.Side;
 
 public class ControlBoard {
     private static ControlBoard mInstance = null;
 
-    private CustomXboxController mController;
     
     public static ControlBoard getInstance() {
         if (mInstance == null) {

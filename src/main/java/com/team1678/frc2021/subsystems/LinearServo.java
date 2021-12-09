@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
-import java.io.FileInputStream;
 
 public class LinearServo extends Servo {
 

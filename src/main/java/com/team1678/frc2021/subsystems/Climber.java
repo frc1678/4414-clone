@@ -7,7 +7,6 @@ import com.team1678.frc2021.Constants;
 import com.team1678.frc2021.loops.ILooper;
 import com.team1678.frc2021.loops.Loop;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Climber extends Subsystem {
@@ -66,11 +65,9 @@ public class Climber extends Subsystem {
 
             @Override
             public void onLoop(double timestamp) {
-                final double start = Timer.getFPGATimestamp();
                 synchronized (Climber.this) {
                     runStateMachine();
                 }
-                final double end = Timer.getFPGATimestamp();
             }
 
             @Override

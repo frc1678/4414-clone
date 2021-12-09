@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import com.team1678.frc2021.subsystems.Swerve;
-import com.team2910.lib.math.Vector2;
 import com.team2910.lib.robot.Axis;
 
 public class DriveCommand extends CommandBase {
