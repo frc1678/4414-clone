@@ -44,13 +44,12 @@ public class GamepadButtonControlBoard {
         return mController.getController().getStickButtonReleased(Hand.kRight);
     }
 
-    public void setRumble(boolean on) { //TODO: all 5 power cells indexed
+    public void setRumble(boolean on) { 
         mController.setRumble(on);
     }
 
     public boolean getSpinUp() {
-        return false;
-        // return mController.getController().getAButtonPressed();
+        return mController.getController().getAButtonPressed();
     }
 
     public boolean getTuck() {
