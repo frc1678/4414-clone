@@ -23,14 +23,12 @@ public class Hopper extends Subsystem {
     private WantedAction mWantedAction = WantedAction.NONE;
 
     public enum WantedAction {
-        // INDEX,
         FEED,
         REVERSE,
         NONE
     }
     
     public enum State {
-        // INDEXING,
         FEEDING,
         REVERSING,
         IDLE,
@@ -99,11 +97,6 @@ public class Hopper extends Subsystem {
             case NONE:
                 mState = State.IDLE;
                 break;
-            /*
-            case INDEX:
-                mState = State.INDEXING;
-                break;
-            */
             case FEED:
                 mState = State.FEEDING;
                 break;
@@ -116,12 +109,6 @@ public class Hopper extends Subsystem {
 
     private void runStateMachine() {
         switch (mState) {
-            /*
-            case INDEXING:
-                mPeriodicIO.hopper_demand = kHopperVoltage;
-                mPeriodicIO.elevator_demand = kElevatorVoltage;                
-                break;
-            */
             case FEEDING:
                 mPeriodicIO.hopper_demand = kHopperVoltage;
                 mPeriodicIO.elevator_demand = kElevatorVoltage;
