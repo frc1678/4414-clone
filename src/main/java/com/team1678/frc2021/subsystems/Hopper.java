@@ -6,8 +6,6 @@ import com.team1678.frc2021.Constants;
 import com.team1678.frc2021.loops.ILooper;
 import com.team1678.frc2021.loops.Loop;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Hopper extends Subsystem {
@@ -25,14 +23,12 @@ public class Hopper extends Subsystem {
     private WantedAction mWantedAction = WantedAction.NONE;
 
     public enum WantedAction {
-        // INDEX,
         FEED,
         REVERSE,
         NONE
     }
     
     public enum State {
-        // INDEXING,
         FEEDING,
         REVERSING,
         IDLE,
@@ -101,11 +97,6 @@ public class Hopper extends Subsystem {
             case NONE:
                 mState = State.IDLE;
                 break;
-            /*
-            case INDEX:
-                mState = State.INDEXING;
-                break;
-            */
             case FEED:
                 mState = State.FEEDING;
                 break;
@@ -118,12 +109,6 @@ public class Hopper extends Subsystem {
 
     private void runStateMachine() {
         switch (mState) {
-            /*
-            case INDEXING:
-                mPeriodicIO.hopper_demand = kHopperVoltage;
-                mPeriodicIO.elevator_demand = kElevatorVoltage;                
-                break;
-            */
             case FEEDING:
                 mPeriodicIO.hopper_demand = kHopperVoltage;
                 mPeriodicIO.elevator_demand = kElevatorVoltage;

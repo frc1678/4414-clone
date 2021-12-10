@@ -4,7 +4,6 @@
 
 package com.team1678.frc2021;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.team1678.frc2021.controlboard.ControlBoard;
 import com.team1678.frc2021.loops.Looper;
 import com.team1678.frc2021.subsystems.Climber;
@@ -14,13 +13,11 @@ import com.team1678.frc2021.subsystems.Intake;
 import com.team1678.frc2021.subsystems.Limelight;
 import com.team1678.frc2021.subsystems.Shooter;
 import com.team1678.frc2021.subsystems.Superstructure;
-import com.team1678.frc2021.subsystems.Swerve;
 import com.team1678.frc2021.subsystems.Turret;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -76,7 +73,7 @@ public class Robot extends TimedRobot {
       mIntake,
       mHopper,
       mTurret,
-      // mHood,
+      mHood,
       mShooter,
       mClimber,
       mLimelight
@@ -84,8 +81,6 @@ public class Robot extends TimedRobot {
 
     mSubsystemManager.registerEnabledLoops(mEnabledLooper);
     mSubsystemManager.registerDisabledLoops(mDisabledLooper);
-
-    //TODO: figure out how to add hood
 
 
   }
@@ -176,9 +171,6 @@ public class Robot extends TimedRobot {
     if (mControlBoard.getClimbMode()) {
       climbMode = true;
     }
-
-    // mHood.updateServoPosition();
-    // mHood.setPosition(0.3);
 
     mSuperstructure.setmWantVisionAim(mControlBoard.getVisionAim());
 

@@ -6,21 +6,11 @@ import com.team1678.frc2021.controlboard.CustomXboxController.Side;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.util.Deadband;
-import com.team254.lib.util.DelayedBoolean;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 public class GamepadButtonControlBoard {
     private final double kDeadband = 0.15;
-
-    private int mDPadUp = -1;
-    private int mDPadDown = -1;
-    private int mDPadRight = -1;
-    private int mDPadLeft = -1;
-
-    private final double kDPadDelay = 0.02;
-    private DelayedBoolean mDPadValid;
 
     private static GamepadButtonControlBoard mInstance = null;
 
@@ -54,13 +44,12 @@ public class GamepadButtonControlBoard {
         return mController.getController().getStickButtonReleased(Hand.kRight);
     }
 
-    public void setRumble(boolean on) { //TODO: all 5 power cells indexed
+    public void setRumble(boolean on) { 
         mController.setRumble(on);
     }
 
     public boolean getSpinUp() {
-        return false;
-        // return mController.getController().getAButtonPressed();
+        return mController.getController().getAButtonPressed();
     }
 
     public boolean getTuck() {

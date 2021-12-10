@@ -6,10 +6,8 @@ import com.team1678.frc2021.Constants;
 import com.team1678.frc2021.commands.AimCommand;
 import com.team1678.frc2021.commands.ShootCommand;
 import com.team1678.frc2021.commands.StopShootingCommand;
-import com.team1678.frc2021.subsystems.Limelight;
 import com.team1678.frc2021.subsystems.Superstructure;
 import com.team1678.frc2021.subsystems.Swerve;
-import com.team1678.frc2021.subsystems.Turret;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
@@ -27,7 +25,6 @@ public class CenterThreeFront extends SequentialCommandGroup{
     public CenterThreeFront(Swerve s_Swerve) {
         
         final Superstructure mSuperstructure = Superstructure.getInstance();
-        final Turret mTurret = Turret.getInstance();
         
         var thetaController =
             new ProfiledPIDController(
@@ -61,7 +58,7 @@ public class CenterThreeFront extends SequentialCommandGroup{
             new StopShootingCommand(mSuperstructure);
 
         AimCommand vision = 
-            new AimCommand(mSuperstructure, mTurret, 90);
+            new AimCommand(mSuperstructure, 90);
 
         addCommands(
             new InstantCommand(() -> s_Swerve.resetOdometry(new Pose2d(2.9, 5.84, Rotation2d.fromDegrees(0.0)))),

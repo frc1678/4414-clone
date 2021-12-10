@@ -5,7 +5,6 @@ import com.team1678.frc2021.Constants;
 import com.team1678.frc2021.loops.Loop;
 import com.team1678.frc2021.loops.ILooper;
 
-import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
 import com.team254.lib.util.ReflectingCSVWriter;
@@ -15,14 +14,12 @@ import com.team2910.lib.math.Vector2;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.OptionalDouble;
 
 /**
@@ -65,7 +62,6 @@ public class Limelight extends Subsystem {
         Loop mLoop = new Loop() {
             @Override
             public void onStart(double timestamp) {
-              //  RobotState.getInstance().resetVision();
             }
 
             @Override
@@ -258,7 +254,6 @@ public class Limelight extends Subsystem {
 
     public synchronized void setPipeline(int mode) {
         if (mode != mPeriodicIO.pipeline) {
-         //   RobotState.getInstance().resetVision();
             mPeriodicIO.pipeline = mode;
 
             System.out.println(mPeriodicIO.pipeline + ", " + mode);

@@ -2,15 +2,12 @@ package com.team1678.frc2021;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import com.team1678.frc2021.subsystems.LinearServo;
-import com.team1678.frc2021.subsystems.ServoSubsystem;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Units;
 import com.team254.lib.geometry.*;
 
-import com.team1678.frc2021.RobotContainer;
 import com.team1678.frc2021.lib.util.SwerveModuleConstants;
 import com.team1678.frc2021.subsystems.Limelight.LimelightConstants;
 import com.team1678.frc2021.subsystems.ServoMotorSubsystem.ServoMotorSubsystemConstants;
